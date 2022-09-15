@@ -11,7 +11,8 @@ async function bootstrap() {
   app.use(
     session({
       secret: 'sioncovy',
-      cookie: { maxAge: 10000, httpOnly: true },
+      // session 100秒过期，且不允许 js 读取
+      cookie: { maxAge: 100000, httpOnly: true },
       rolling: false, // 每次重新请求时重新设置 cookie
       renew: false, //是否在Session快过期时刷新Session的有效期
       key: 'sessionId',
