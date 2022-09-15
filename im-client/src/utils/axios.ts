@@ -13,6 +13,7 @@ export class Request {
   baseConfig: AxiosRequestConfig = {
     baseURL: "http://localhost:4000",
     timeout: 3000,
+    withCredentials: true,
   };
 
   constructor(config: AxiosRequestConfig) {
@@ -23,11 +24,14 @@ export class Request {
     // 全局请求拦截器
     this.instance.interceptors.request.use(
       (res: AxiosRequestConfig) => {
-        // const noAuthApiList = ["/users/all"];
-        // const token = readLocalItem("token");
-        console.log(res.url);
-        // if (token || noAuthList.includes(res.url))
-        return res;
+        const noAuthApiList = [
+          "/user/login",
+          "/user/register",
+          "/user/authCode",
+        ];
+        const token = readLocalItem("token");
+        if (res.headers) res.headers.token = token;
+        if (token || noAuthApiList.includes(res.url as string)) return res;
       },
       (err: any) => err
     );
