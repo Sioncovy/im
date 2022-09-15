@@ -11,6 +11,13 @@ export class UserController {
     private toolsService: ToolsService,
   ) {}
 
+  // @UseGuards(JwtAuthGuard)
+  @Get('/')
+  async getUserByToken(@Req() req) {
+    console.log(req);
+    return req.user;
+  }
+
   @Public()
   @Post('login')
   async login(@Body() accountInfo: Login, @Session() session): Promise<any> {

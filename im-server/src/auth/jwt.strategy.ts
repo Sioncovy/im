@@ -1,14 +1,13 @@
-// import { compareSync } from 'bcryptjs';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy } from 'passport-local';
+import { Strategy } from 'passport-jwt';
 import { ExtractJwt } from 'passport-jwt';
 import { Injectable } from '@nestjs/common';
 import { jwtConstants } from './constants';
-import { AuthService } from './auth.service';
+import { UserService } from 'src/server/user/user.service';
 
 @Injectable()
 export class jwtStategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(private readonly userService: UserService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -16,7 +15,9 @@ export class jwtStategy extends PassportStrategy(Strategy) {
     });
   }
 
+  // 配置token记录的信息，解析后也是这个
   async validate(payload: any) {
-    return { username: payload.username, password: payload.password };
+    const user = await this.userService.findOne(payload.username);
+    return { ...user };
   }
 }

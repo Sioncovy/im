@@ -14,7 +14,6 @@ export class AuthService {
   // 校验用户信息
   async validateUser(username: string, password: string): Promise<any> {
     const user = await this.usersService.findOne(username);
-    console.log(user);
     if (user) {
       const hashedPassword = user.password;
       const salt = user.salt;
