@@ -1,26 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, ReactDOM } from "react";
 import Button from "../../components/button/button";
 import Input from "../../components/input/input";
 import Request from "../../utils/axios";
+import { readLocalItem, saveLocalItem } from "../../utils/storage";
 
 export default function login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [codeImg, setCodeImg] = useState<any>();
+  const [code, setCode] = useState<any>();
 
   const loginHandle = async () => {
-    const data = await Request.post("/users/login", {
+    const res: any = await Request.post("/user/login", {
       username,
       password,
+      code,
     });
-    console.log(data);
+    if (res.code !== 200) {
+      return;
+    }
+    saveLocalItem("token", res.data.token);
   };
 
   const registerHandle = async () => {
-    const data = await Request.post("/users/register", {
+    const res = await Request.post("/user/register", {
       username,
       password,
     });
   };
+
+  const getAuthCode = async () => {
+    const res = await Request.get("/user/authCode");
+    setCodeImg(res);
+  };
+
+  const createCodeImg = () => {
+    return code;
+  };
+
+  useEffect(() => {
+    getAuthCode();
+  }, []);
 
   return (
     <div className="flex justify-center items-center h-auto w-[60rem] bg-white overflow-hidden rounded">
@@ -48,6 +68,22 @@ export default function login() {
             text="请输入密码..."
             onChange={(e: any) => setPassword(e.target.value)}
           />
+        </div>
+        <div className="flex flex-col text-sm space-y-2 mt-4">
+          <span className="">验证码</span>
+          <div className="flex justify-between w-80">
+            <Input
+              type="text"
+              style=""
+              text="请输入验证码..."
+              onChange={(e: any) => setCode(e.target.value)}
+            />
+            <div
+              className=""
+              dangerouslySetInnerHTML={{ __html: codeImg }}
+              onClick={getAuthCode}
+            ></div>
+          </div>
         </div>
         <div className="text-sm flex justify-center items-center space-x-3 mt-6">
           <Button onClick={registerHandle}>注册</Button>
