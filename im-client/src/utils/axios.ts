@@ -30,7 +30,7 @@ export class Request {
           "/user/authCode",
         ];
         const token = readLocalItem("token");
-        if (res.headers) res.headers.token = token;
+        if (res.headers) res.headers.Authorization = `Bearer ${token}`;
         if (token || noAuthApiList.includes(res.url as string)) return res;
       },
       (err: any) => err
