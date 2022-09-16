@@ -1,0 +1,101 @@
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .app {
+    margin: 60px auto;
+    width: 800px;
+    box-shadow: 0px 0px 8px 2px #ccc;
+  }
+
+  .app .logowider {
+    height: 80px;
+    padding: 0 20px;
+    background-color: #e4effa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .app .logowider .logo {
+    height: 60px;
+  }
+
+  .app .main {
+    padding: 0 60px;
+    margin-bottom: 40px;
+  }
+
+  .app .main .title {
+    padding: 30px 0;
+    padding-top: 50px;
+    font-size: 40px;
+    text-align: center;
+    color: #4f7ba5;
+  }
+
+  .app .main .content .hello {
+    font-size: 18px;
+  }
+
+  .app .main .content .hello .name {
+    font-weight: 700;
+    font-size: 20px;
+    color: #2a3153;
+  }
+
+  .app .main .content .text {
+    margin: 20px 40px;
+    line-height: 30px;
+  }
+
+  .app .main .content .code {
+    margin: 20px 0;
+    font-size: 26px;
+    text-align: center;
+    font-weight: 700;
+  }
+
+  .app .main .content .footer {
+    line-height: 30px;
+    padding-left: 20px;
+    border-left: 4px solid #818ab4;
+  }
+
+  .app .main .content .footer .group {
+    font-weight: 700;
+  }
+</style>
+
+<body>
+  <div class="app">
+    <div class="main">
+      <h1 class="title">邮箱验证码</h1>
+      <div class="content">
+        <p class="hello">亲爱的用户：</p>
+        <div class="text">
+          <p>您正在进行邮箱验证，本次请求的验证码为：</p>
+          <p class="code"><%= locals.code %></p>
+          <p>
+            为保障您账号的安全性，请在30分钟内完成验证，祝您开启一段美好的时光！
+          </p>
+        </div>
+        <div class="footer">
+          <p class="group">信笔科技</p>
+          <p class="time"><%= locals.date %></p>
+        </div>
+      </div>
+    </div>
+    <div class="logowider"></div>
+  </div>
+</body>
