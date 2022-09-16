@@ -21,6 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@nestjs-modules/mailer": "^1.8.1",
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/jwt": "^9.0.0",
@@ -31,8 +32,12 @@
     "@types/passport": "^1.0.11",
     "@types/passport-local": "^1.0.34",
     "bcryptjs": "^2.4.3",
+    "dayjs": "^1.11.5",
+    "ejs": "^3.1.8",
     "express-session": "^1.17.3",
+    "ioredis": "^5.2.3",
     "mongoose": "^6.6.0",
+    "nodemailer": "^6.7.8",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
