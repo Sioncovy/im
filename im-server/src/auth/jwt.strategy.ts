@@ -15,9 +15,9 @@ export class jwtStategy extends PassportStrategy(Strategy) {
     });
   }
 
-  // 配置token记录的信息，解析后也是这个
+  // 配置token记录的信息，解析后也是这个，不能直接解构user，会有大量内部结构的信息
   async validate(payload: any) {
     const user = await this.userService.findOne(payload.username);
-    return { ...user };
+    return { username: user.username };
   }
 }

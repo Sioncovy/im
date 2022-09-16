@@ -1,4 +1,4 @@
-import { Body, Session, Controller, Get, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { User, Login } from './user.interface';
 import { UserService } from './user.service';
 import { ToolsService } from 'src/utils/tools.service';
@@ -15,13 +15,13 @@ export class UserController {
   // @UseGuards(JwtAuthGuard)
   @Get('/')
   async getUserByToken(@Req() req) {
-    console.log(req);
-    return req.user;
+    console.log(req.user);
+    return req.user._doc;
   }
 
   @Public()
   @Post('login')
-  async login(@Body() accountInfo: Login, @Session() session): Promise<any> {
+  async login(@Body() accountInfo: Login): Promise<any> {
     const redis = await RedisIntance.initRedis('user.authCode', 0);
 
     const code = accountInfo.code.toLowerCase();

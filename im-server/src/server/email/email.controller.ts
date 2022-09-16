@@ -1,7 +1,7 @@
 import { Controller, Post } from '@nestjs/common';
 import { EmailService } from './email.service';
 import { Public } from 'src/decorators/public.decorator';
-import { Body, Session } from '@nestjs/common/decorators';
+import { Body } from '@nestjs/common/decorators';
 
 @Controller('email')
 export class EmailController {
@@ -9,7 +9,7 @@ export class EmailController {
 
   @Public()
   @Post('sendCode')
-  async sendEmailCode(@Body() data, @Session() session) {
+  async sendEmailCode(@Body() data) {
     console.log(data);
     return await this.emailService.sendeMailCode(data);
   }
