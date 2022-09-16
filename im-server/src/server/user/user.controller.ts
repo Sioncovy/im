@@ -3,6 +3,7 @@ import { User, Login } from './user.interface';
 import { UserService } from './user.service';
 import { ToolsService } from 'src/utils/tools.service';
 import { Public } from 'src/decorators/public.decorator';
+import { RedisIntance } from 'src/utils/redis';
 
 @Controller('user')
 export class UserController {
@@ -21,10 +22,13 @@ export class UserController {
   @Public()
   @Post('login')
   async login(@Body() accountInfo: Login, @Session() session): Promise<any> {
+    const redis = await RedisIntance.initRedis('user.authCode', 0);
+
     const code = accountInfo.code.toLowerCase();
-    const scode = session.code.toLowerCase();
-    // console.log('--', scode, code);
-    if (scode !== code) {
+    const rawcode = (await redis.get('authCode')).toLowerCase();
+
+    console.log('--', rawcode, code);
+    if (rawcode !== code) {
       return {
         code: 403,
         msg: '验证码错误',
@@ -44,8 +48,8 @@ export class UserController {
   @Get('authCode')
   async getCode(@Req() req, @Res() res) {
     const svgCaptcha = await this.toolsService.captCha();
-    req.session.code = svgCaptcha.text;
-
+    const redis = await RedisIntance.initRedis('user.authCode', 0);
+    await redis.setex('authCode', 60 * 30, svgCaptcha.text);
     // console.log(req.session.code);
     res.type('image/svg+xml');
     res.send(svgCaptcha.data);

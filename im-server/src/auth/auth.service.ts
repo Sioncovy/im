@@ -2,6 +2,7 @@ import { Injectable, forwardRef, Inject } from '@nestjs/common';
 import { UserService } from 'src/server/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { encryptPassword } from 'src/utils/cryptogram';
+import { RedisIntance } from 'src/utils/redis';
 
 @Injectable()
 export class AuthService {
@@ -45,6 +46,10 @@ export class AuthService {
     const payload = { username: user.username, password: user.password };
     try {
       const token = this.jwtService.sign(payload);
+      // 实例化 redis
+      const redis = await RedisIntance.initRedis('auth.certificate', 0);
+      // 将用户信息和 token 存入 redis，并设置失效时间，语法：[key, seconds, value]
+      await redis.setex(`${user.username}`, 300, `${token}`);
       return {
         code: 200,
         data: {
