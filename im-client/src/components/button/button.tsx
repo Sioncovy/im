@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 interface propsType {
-  type?: string;
+  type?: "" | "primary" | "success";
   onClick?: Function;
   children?: string;
   size?: "small" | "medium" | "large";
@@ -15,7 +15,9 @@ export default function button(props: propsType) {
   const customStyle = () => {
     const { type, size, style } = props;
     // 默认样式
-    let styleList = ["box-border py-1 rounded"] as string[];
+    let styleList = [
+      "box-border h-9 py-1 rounded transition-all active:scale-95 border-2",
+    ] as string[];
 
     // 按钮大小
     let sizeClass = "px-6";
@@ -27,11 +29,13 @@ export default function button(props: propsType) {
     styleList.push(sizeClass);
 
     // 按钮类型
-    let typeClass =
-      "border-2 border-gray-200 hover:border-blue-200 hover:text-blue-500";
+    let typeClass = "border-gray-200 hover:border-blue-200 hover:text-blue-500";
     if (type === "primary") {
       typeClass =
-        "border-2 border-blue-300 bg-blue-400 text-slate-50 hover:bg-blue-300 hover:border-blue-200 ";
+        "border-blue-300 bg-blue-400 text-slate-50 hover:bg-blue-300 hover:border-blue-200 ";
+    } else if (type === "success") {
+      typeClass =
+        "border-emerald-400 bg-emerald-500 text-white hover:border-emerald-300 hover:bg-emerald-400";
     }
     styleList.push(typeClass);
 
