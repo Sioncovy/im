@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ISendMailOptions, MailerService } from '@nestjs-modules/mailer/dist';
 import * as dayjs from 'dayjs';
+import { RedisIntance } from 'src/utils/redis';
 
 @Injectable()
 export class EmailService {
@@ -10,7 +11,7 @@ export class EmailService {
    * 发送邮箱验证码
    * @param data 邮件主体信息
    */
-  async sendeMailCode(data) {
+  async sendEmailCode(data) {
     try {
       const code = Math.random().toString().slice(-6);
       const date = dayjs().format('YYYY年MM月DD日 HH:mm:ss');
@@ -37,10 +38,12 @@ export class EmailService {
       };
       this.mailerService
         .sendMail(sendEmailOptions)
-        .then(() => {
+        .then(async () => {
           console.log(
             `发送邮件给:${data.email},成功!主题:${data?.subject || '默认'}`,
           );
+          const redis = await RedisIntance.initRedis('email.sendEmailCode', 0);
+          redis.setex(`emailCode-${data.email}`, 60 * 30, code);
         })
         .catch((error) => {
           console.log(
@@ -54,7 +57,10 @@ export class EmailService {
       };
     } catch (err) {
       console.error('发送邮件出错:', err);
-      return { err };
+      return {
+        code: 444,
+        msg: '邮件账号有误，请核对',
+      };
     }
   }
 }

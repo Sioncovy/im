@@ -10,7 +10,12 @@ export class EmailController {
   @Public()
   @Post('sendCode')
   async sendEmailCode(@Body() data) {
-    console.log(data);
-    return await this.emailService.sendeMailCode(data);
+    if (!data?.email) {
+      return {
+        code: 444,
+        msg: '请输入邮箱账号！',
+      };
+    }
+    return await this.emailService.sendEmailCode(data);
   }
 }

@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
-import { User, Login } from './user.interface';
+import { Body, Controller, Get, Query, Post, Req, Res } from '@nestjs/common';
+import { User, Login, Register } from './user.interface';
 import { UserService } from './user.service';
 import { ToolsService } from 'src/utils/tools.service';
 import { Public } from 'src/decorators/public.decorator';
 import { RedisIntance } from 'src/utils/redis';
+import { Request } from 'express';
 
 @Controller('user')
 export class UserController {
@@ -12,46 +13,62 @@ export class UserController {
     private toolsService: ToolsService,
   ) {}
 
-  // @UseGuards(JwtAuthGuard)
   @Get('/')
-  async getUserByToken(@Req() req) {
-    console.log(req.user);
-    return req.user._doc;
+  async getUserByToken(@Req() req: Request) {
+    return req.user;
   }
 
   @Public()
   @Post('login')
-  async login(@Body() accountInfo: Login): Promise<any> {
-    const redis = await RedisIntance.initRedis('user.authCode', 0);
+  async login(@Body() body: Login): Promise<any> {
+    const redis = await RedisIntance.initRedis('user.login', 0);
+    const { code, timestamp } = body;
 
-    const code = accountInfo.code.toLowerCase();
-    const rawcode = (await redis.get('authCode')).toLowerCase();
+    const lcode = code?.toLowerCase();
+    const rawcode = (await redis.get(`authCode-${timestamp}`))?.toLowerCase();
 
-    console.log('--', rawcode, code);
-    if (rawcode !== code) {
+    if (rawcode !== lcode) {
       return {
         code: 403,
         msg: '验证码错误',
       };
     }
-    return await this.userService.login(accountInfo);
+    return await this.userService.login(body);
     // throw new HttpException('Forbiden', 403);
   }
 
   @Public()
   @Post('register')
-  async register(@Body() accountInfo: User): Promise<any> {
-    return await this.userService.register(accountInfo);
+  async register(@Body() body: Register): Promise<any> {
+    const { username, password, code } = body;
+    const redis = await RedisIntance.initRedis('user.register', 0);
+    const rawcode = await redis.get(`emailCode-${username}`);
+    if (
+      username.length < 6 ||
+      password.length < 6 ||
+      code?.toLowerCase() !== rawcode?.toLowerCase()
+    )
+      return;
+    const user = await this.userService.findOne(username);
+    if (user) {
+      return {
+        code: 444,
+        msg: '该邮箱已被注册！',
+      };
+    }
+    return await this.userService.register(body);
   }
 
   @Public()
   @Get('authCode')
-  async getCode(@Req() req, @Res() res) {
+  async getCode(@Query('') query) {
+    const { timestamp } = query;
+
     const svgCaptcha = await this.toolsService.captCha();
+
     const redis = await RedisIntance.initRedis('user.authCode', 0);
-    await redis.setex('authCode', 60 * 30, svgCaptcha.text);
-    // console.log(req.session.code);
-    res.type('image/svg+xml');
-    res.send(svgCaptcha.data);
+    await redis.setex(`authCode-${timestamp}`, 60 * 3, svgCaptcha.text);
+
+    return svgCaptcha.data;
   }
 }

@@ -11,4 +11,12 @@ export interface Login extends Document {
   readonly username: string;
   readonly password: string;
   readonly code: string;
+  readonly timestamp: number;
+}
+
+export interface Register extends Document {
+  // readonly _id: ObjectId;
+  readonly username: string;
+  readonly password: string;
+  readonly code: string;
 }
