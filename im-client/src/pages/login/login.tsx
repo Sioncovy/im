@@ -3,7 +3,7 @@ import Button from "../../components/button/button";
 import Input from "../../components/input/input";
 import Request from "../../utils/axios";
 import { readLocalItem, saveLocalItem } from "../../utils/storage";
-// import { info } from "../../components/message/message";
+import { message } from "../../components/message/message";
 
 export default function login() {
   const [isLogin, setIsLogin] = useState(true);
@@ -21,18 +21,28 @@ export default function login() {
       timestamp,
     });
     if (res.code !== 200) {
+      message.error(res.msg);
+      getAuthCode();
       return;
     }
     saveLocalItem("token", res.data.token);
+    message.success(res.msg);
   };
 
   const registerHandle = async () => {
     console.log("click");
-    const res = await Request.post("/user/register", {
+    const res: any = await Request.post("/user/register", {
       username,
       password,
       code,
     });
+    if (res.code !== 200) {
+      message.error(res.msg);
+      getAuthCode();
+      return;
+    }
+    message.success(res.msg);
+    setIsLogin(true);
   };
 
   const getAuthCode = async () => {
@@ -41,13 +51,14 @@ export default function login() {
   };
 
   const sendEmailCode = async () => {
-    const res = await Request.post("/email/sendCode", {
+    const res: any = await Request.post("/email/sendCode", {
       email: username,
     });
-  };
-
-  const createCodeImg = () => {
-    return code;
+    if (res.code !== 200) {
+      message.error(res.msg);
+      return;
+    }
+    message.success(res.msg);
   };
 
   const validate = (
