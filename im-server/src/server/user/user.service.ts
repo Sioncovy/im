@@ -39,7 +39,10 @@ export class UserService {
   async register(accountInfo: CreateUserDto) {
     const { username, password } = accountInfo;
     if (username.length < 5 || password.length < 6) {
-      return Promise.reject('账号或密码过短');
+      return {
+        code: 444,
+        msg: '账号或密码过短',
+      };
     }
     const isExist = await this.findOne(username);
     if (isExist) {
