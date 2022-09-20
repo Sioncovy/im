@@ -6,7 +6,7 @@ export const saveLocalItem = (key: string, data: any) => {
 };
 
 export const readLocalItem = (key: string) => {
-  return JSON.parse(localStorage.getItem(key) ?? "{}");
+  return JSON.parse(localStorage.getItem(key) ?? "null");
 };
 
 /**
@@ -17,5 +17,5 @@ export const saveSessionItem = (key: string, data: any) => {
 };
 
 export const readSessionItem = (key: string) => {
-  return JSON.parse(sessionStorage.getItem(key) ?? "{}");
+  return JSON.parse(sessionStorage.getItem(key) ?? "null");
 };
