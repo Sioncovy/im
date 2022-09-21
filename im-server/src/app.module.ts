@@ -8,6 +8,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './guards/auth.guard';
 import { EmailModule } from './server/email/email.module';
 import { config } from './config/db';
+import { ChatModule } from './server/chat/chat.module';
+import { ChatGateway } from './server/chat/chat.gateway';
 
 @Module({
   imports: [
@@ -17,8 +19,13 @@ import { config } from './config/db';
     UserModule,
     AuthModule,
     EmailModule,
+    ChatModule,
   ],
   controllers: [AppController],
-  providers: [AppService, { provide: APP_GUARD, useClass: JwtAuthGuard }],
+  providers: [
+    AppService,
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
+    ChatGateway,
+  ],
 })
 export class AppModule {}
