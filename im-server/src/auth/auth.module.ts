@@ -12,7 +12,7 @@ import { UserModule } from 'src/server/user/user.module';
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '8h' },
+      signOptions: { expiresIn: '8d' },
     }),
     forwardRef(() => UserModule),
   ],
