@@ -4,6 +4,7 @@ import Input from "../../components/input/input";
 import Request from "../../utils/axios";
 import { readLocalItem, saveLocalItem } from "../../utils/storage";
 import { message } from "../../components/message/message";
+import { useNavigate } from "react-router-dom";
 
 export default function login() {
   const [isLogin, setIsLogin] = useState(true);
@@ -12,6 +13,8 @@ export default function login() {
   const [codeImg, setCodeImg] = useState<any>();
   const [code, setCode] = useState<any>();
   const [timestamp, setTimestamp] = useState(new Date().getTime());
+
+  const router = useNavigate();
 
   const loginHandle = async () => {
     const res: any = await Request.post("/user/login", {
@@ -27,6 +30,7 @@ export default function login() {
     }
     saveLocalItem("token", res.data.token);
     message.success(res.msg);
+    router("/");
   };
 
   const registerHandle = async () => {

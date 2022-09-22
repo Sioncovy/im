@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosInstance, AxiosResponse } from "axios";
 import { readLocalItem } from "./storage";
+import { message } from "../components/message/message";
 
 type Result<T> = {
   code: number;
@@ -30,8 +31,13 @@ export class Request {
           "/user/authCode",
         ];
         const token = readLocalItem("token");
+        const url = res.url?.split("?")[0];
         if (res.headers) res.headers.Authorization = `Bearer ${token}`;
-        if (token || noAuthApiList.includes(res.url as string)) return res;
+        if (token || noAuthApiList.includes(url as string)) {
+          return res;
+        }
+        message.error("登录失效，请重新登录");
+        window.location.assign("/login");
       },
       (err: any) => err
     );
@@ -52,7 +58,7 @@ export class Request {
   public get<T = any>(
     url: string,
     config?: AxiosRequestConfig
-  ): Promise<AxiosResponse<Result<T>>> {
+  ): Promise<Result<T>> {
     return this.instance.get(url, config);
   }
 
@@ -60,7 +66,7 @@ export class Request {
     url: string,
     data?: any,
     config?: AxiosRequestConfig
-  ): Promise<AxiosResponse<Result<T>>> {
+  ): Promise<Result<T>> {
     return this.instance.post(url, data, config);
   }
 
@@ -68,7 +74,7 @@ export class Request {
     url: string,
     data?: any,
     config?: AxiosRequestConfig
-  ): Promise<AxiosResponse<Result<T>>> {
+  ): Promise<Result<T>> {
     return this.instance.put(url, data, config);
   }
 
@@ -76,7 +82,7 @@ export class Request {
     url: string,
     data?: any,
     config?: AxiosRequestConfig
-  ): Promise<AxiosResponse<Result<T>>> {
+  ): Promise<Result<T>> {
     return this.instance.delete(url, config);
   }
 }
