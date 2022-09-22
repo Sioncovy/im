@@ -10,6 +10,7 @@ import { EmailModule } from './server/email/email.module';
 import { config } from './config/db';
 import { ChatModule } from './server/chat/chat.module';
 import { ChatGateway } from './server/chat/chat.gateway';
+import { ContactModule } from './server/contact/contact.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ChatGateway } from './server/chat/chat.gateway';
     AuthModule,
     EmailModule,
     ChatModule,
+    ContactModule,
   ],
   controllers: [AppController],
   providers: [
