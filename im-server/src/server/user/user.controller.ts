@@ -61,7 +61,7 @@ export class UserController {
 
   @Public()
   @Get('authCode')
-  async getCode(@Query('') query) {
+  async getCode(@Query() query) {
     const { timestamp } = query;
 
     const svgCaptcha = await this.toolsService.captCha();
@@ -70,5 +70,12 @@ export class UserController {
     await redis.setex(`authCode-${timestamp}`, 60 * 3, svgCaptcha.text);
 
     return svgCaptcha.data;
+  }
+
+  @Get('query')
+  async queryUsers(@Query() query: { username: string }) {
+    const { username } = query;
+
+    return await this.userService.findAll(username);
   }
 }

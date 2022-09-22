@@ -72,11 +72,25 @@ export class UserService {
     }
   }
 
-  async findOne(username: string): Promise<User | any> {
-    const user = await this.userModule.findOne({ username });
+  async findOne(username: string, excludes?: any): Promise<User | any> {
+    const user = await this.userModule.findOne({ username }, excludes);
     if (!user) {
       return void 0;
     }
     return user;
+  }
+
+  async findAll(username: string) {
+    const users = await this.userModule.find(
+      { username },
+      { password: 0, salt: 0, __v: 0, _id: 0 },
+    );
+    return {
+      code: 200,
+      data: {
+        users,
+      },
+      msg: '请求成功',
+    };
   }
 }
