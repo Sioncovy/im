@@ -14,7 +14,6 @@ export class Request {
   baseConfig: AxiosRequestConfig = {
     baseURL: "http://localhost:4000",
     timeout: 3000,
-    withCredentials: true,
   };
 
   constructor(config: AxiosRequestConfig) {
