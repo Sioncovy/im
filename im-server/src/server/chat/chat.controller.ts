@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
@@ -21,19 +22,20 @@ export class ChatController {
     private readonly chatService: ChatService,
   ) {}
 
-  @Post()
-  create(@Body() createChatDto: CreateChatDto) {
-    return this.chatService.create(createChatDto);
+  @Post('create')
+  async create(@Body() createChatDto: CreateChatDto) {
+    return await this.chatService.create(createChatDto);
   }
 
   @Get()
-  findAll() {
-    return this.chatService.findAll();
+  async findAll(@Req() req) {
+    const { username } = req.user;
+    return await this.chatService.findAll(username);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.chatService.findOne(+id);
+    // return this.chatService.findOne();
   }
 
   @Patch(':id')
