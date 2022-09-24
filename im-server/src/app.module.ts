@@ -7,7 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './guards/auth.guard';
 import { EmailModule } from './server/email/email.module';
-import { config } from './config/db';
+import { config } from './config';
 import { ChatModule } from './server/chat/chat.module';
 import { ChatGateway } from './server/chat/chat.gateway';
 import { ContactModule } from './server/contact/contact.module';

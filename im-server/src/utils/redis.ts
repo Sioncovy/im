@@ -1,5 +1,5 @@
 import Redis from 'ioredis';
-import { config } from 'src/config/db';
+import { config } from 'src/config';
 
 // let n: number = 0;
 const redisIndex = []; // 用于记录 redis 实例索引
