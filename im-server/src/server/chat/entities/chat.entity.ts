@@ -15,28 +15,28 @@ export class Chat {
   @Prop({ required: true })
   to: string;
 
-  @Prop({ required: true })
+  @Prop()
   last_msg: string;
 
-  @Prop({ required: true })
+  @Prop()
   last_msg_id: string;
 
-  @Prop({ required: true })
+  @Prop()
   chat_name: string;
 
-  @Prop({ required: true })
+  @Prop()
   last_user_name: string;
 
-  @Prop({ required: true })
+  @Prop()
   last_time: number;
 
-  @Prop({ required: true })
+  @Prop()
   chat_type: number; // 0.系统消息/1.个人聊天/2.群组消息
 
-  @Prop({ required: true })
+  @Prop()
   message_type: number; // 文字/图片/文件/音乐
 
-  @Prop({ required: true })
+  @Prop()
   unread_count: number;
 }
 
