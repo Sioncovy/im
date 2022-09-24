@@ -1,0 +1,20 @@
+{
+  "name": "mailpen",
+  "version": "1.0.0",
+  "description": "本项目是前后端完整的 即时通信软件（IM） 项目。",
+  "main": "index.js",
+  "scripts": {
+    "client:dev": "npm run dev --prefix ./im-client",
+    "server:dev": "npm run start:dev --prefix ./im-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sioncovy/im.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sioncovy/im/issues"
+  },
+  "homepage": "https://github.com/Sioncovy/im#readme"
+}
