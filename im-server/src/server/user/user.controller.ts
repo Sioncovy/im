@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Query, Post, Req, Res } from '@nestjs/common';
-import { User, Login, Register } from './user.interface';
+import { Userinfo, Login, Register } from './user.interface';
 import { UserService } from './user.service';
 import { ToolsService } from 'src/utils/tools.service';
 import { Public } from 'src/decorators/public.decorator';
@@ -15,7 +15,13 @@ export class UserController {
 
   @Get('/')
   async getUserByToken(@Req() req: Request) {
-    return req.user;
+    const { username } = req.user as Userinfo;
+    return await this.userService.findOne(username, {
+      password: 0,
+      salt: 0,
+      __v: 0,
+      _id: 0,
+    });
   }
 
   @Public()
