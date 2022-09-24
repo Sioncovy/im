@@ -20,3 +20,7 @@ export interface Register extends Document {
   readonly password: string;
   readonly code: string;
 }
+
+export interface Userinfo {
+  readonly username: string;
+}
