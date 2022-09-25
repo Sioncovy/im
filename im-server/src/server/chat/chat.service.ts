@@ -5,14 +5,19 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ChatDocument, Chat } from './entities/chat.entity';
 import { v4 as uuidv4 } from 'uuid';
+import { CreateMsgDto } from './dto/create-msg.dto';
+import { Message, MessageDocument } from './entities/message.entity';
+import { ChatGateway } from './chat.gateway';
 
 @Injectable()
 export class ChatService {
   constructor(
     @InjectModel('chat') private readonly chatModel: Model<ChatDocument>,
+    @InjectModel('message') private messageModel: Model<MessageDocument>,
+    private readonly ws: ChatGateway,
   ) {}
 
-  async create(createChatDto: CreateChatDto) {
+  async createChat(createChatDto: CreateChatDto) {
     const chatId = uuidv4();
     const chat = await this.findOne(createChatDto.from);
     if (chat) {
@@ -27,6 +32,11 @@ export class ChatService {
     };
     try {
       await this.chatModel.create(createChatDto);
+      await this.chatModel.create({
+        ...createChatDto,
+        from: createChatDto.to,
+        to: createChatDto.from,
+      });
       return {
         code: 200,
         msg: '发起会话成功',
@@ -86,19 +96,73 @@ export class ChatService {
     }
   }
 
-  async findOne(username: string, excludes?: any): Promise<Chat | any> {
-    const chat = await this.chatModel.findOne({ username }, excludes);
+  async findOne(filter: any, excludes?: any) {
+    const chat = await this.chatModel.findOne(filter, excludes);
     if (!chat) {
-      return void 0;
+      return {
+        code: 444,
+        msg: '获取会话信息失败',
+      };
     }
-    return chat;
+    return {
+      code: 200,
+      data: {
+        chatInfo: chat,
+      },
+      msg: '获取会话信息成功',
+    };
   }
 
-  update(id: number, updateChatDto: UpdateChatDto) {
-    return `This action updates a #${id} chat`;
+  async createMsg(createMsgDto: CreateMsgDto) {
+    try {
+      const uuid = uuidv4();
+      const time = new Date().getTime();
+      const newMsg = await this.messageModel.create({
+        ...createMsgDto,
+        msg_id: uuid,
+        send_time: time,
+      });
+      const { chatId, msg } = createMsgDto;
+      const res = await this.chatModel.updateMany(
+        { chatId },
+        {
+          last_msg: msg,
+          last_msg_id: uuid,
+          last_time: time,
+        },
+      );
+      console.log(res);
+      this.ws.server.emit('updateChat');
+    } catch (err) {
+      return {
+        code: 444,
+        msg: '消息发送失败：' + err,
+      };
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} chat`;
+  async getMsgs(chatId: string, username: string) {
+    try {
+      const chat = await this.chatModel.findOne({ chatId });
+      if (chat.from !== username && chat.to !== username) {
+        return {
+          code: 444,
+          msg: '非本人查询！',
+        };
+      }
+      const msgList = await this.messageModel.find(
+        { chatId },
+        { __v: 0, _id: 0 },
+      );
+      return {
+        code: 200,
+        data: {
+          msgList,
+        },
+        msg: '消息列表获取成功',
+      };
+    } catch (err) {
+      return { code: 444, msg: '消息列表获取失败：' + err };
+    }
   }
 }
