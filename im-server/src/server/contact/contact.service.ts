@@ -5,12 +5,14 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Contact, ContactDocument } from './entities/contact.entity';
 import { UserService } from '../user/user.service';
+import { ChatService } from '../chat/chat.service';
 
 @Injectable()
 export class ContactService {
   constructor(
     @InjectModel('contact') private contactModel: Model<ContactDocument>,
     private readonly userService: UserService,
+    private readonly chatService: ChatService,
   ) {}
 
   create(createContactDto: CreateContactDto) {
@@ -28,7 +30,7 @@ export class ContactService {
     };
   }
 
-  async getAllRequest(username) {
+  async getAllRequest(username: string) {
     try {
       const requests = await this.contactModel.find(
         { type: 0, friend_id: username },
@@ -63,6 +65,7 @@ export class ContactService {
         type: 1,
         relation_count: 0,
       });
+      this.chatService.createChat({ from: id, to: fid });
       return {
         code: 200,
         msg: '同意好友申请成功',
