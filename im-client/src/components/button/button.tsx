@@ -8,7 +8,7 @@ interface propsType {
   style?: string;
 }
 
-export default function button(props: propsType) {
+export default function Button(props: propsType) {
   // console.log(props);
   let { children: name } = props;
 
@@ -22,7 +22,7 @@ export default function button(props: propsType) {
     // 按钮大小
     let sizeClass = "px-6";
     if (size === "small") {
-      sizeClass = "px-4";
+      sizeClass = "px-4 h-8 text-sm";
     } else if (size === "large") {
       sizeClass = "px-8";
     }

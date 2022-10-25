@@ -4,12 +4,13 @@ interface propsType {
   type?: "text" | "password";
   style?: string;
   text?: string;
+  value?: string;
   onChange?: Function;
   validate?: Function;
 }
 
-export default function input(props: propsType) {
-  let { text, type: typeName, validate } = props;
+export default function Input(props: propsType) {
+  let { text, type: typeName, validate, value } = props;
   const [status, setStatus] = useState(null as unknown as Boolean);
 
   // console.log(props);
@@ -45,6 +46,7 @@ export default function input(props: propsType) {
     <input
       type={typeName ?? "text"}
       placeholder={text ?? "请输入..."}
+      value={value}
       className={
         styleList +
         (status === null
