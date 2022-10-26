@@ -1,13 +1,27 @@
+/*
+ * @Author: Sioncovy 1298184727@qq.com
+ * @Date: 2022-10-22 00:22:38
+ * @LastEditors: Sioncovy 1298184727@qq.com
+ * @LastEditTime: 2022-10-26 05:17:58
+ * @FilePath: \im\im-client\src\pages\contact\contact.tsx
+ * @Description:
+ *
+ * Copyright (c) 2022 by Sioncovy 1298184727@qq.com, All Rights Reserved.
+ */
 import React, { useEffect, useState } from "react";
 import RequestItem from "./components/request";
 import PersonItem from "./components/person";
 import Request from "../../utils/axios";
 import { readLocalItem, saveLocalItem } from "../../utils/storage";
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, useLocation } from "react-router-dom";
+import Input from "../../components/input/input";
+import Button from "../../components/button/button";
+import { UserInfoType } from "../../interfaces/user";
+// import { useAppSelector } from "../../hooks/storeHook";
 
 interface RequestType {
-  friend_id: string;
-  id: string;
+  friend_username: string;
+  username: string;
   reason: string;
   type: 0;
 }
@@ -18,9 +32,11 @@ interface ContactType {
   nickname: string;
 }
 
-export default function contact() {
+export default function Contact() {
   const [requestList, setRequestList] = useState<RequestType[]>([]);
   const [contactList, setContactList] = useState<ContactType[]>([]);
+  const [queryList, setQueryList] = useState<UserInfoType[]>([]);
+  const [inputValue, setInputValue] = useState<string>("");
   const [currentIndex, setCurrentIndex] = useState<number>(1);
 
   const sideList = [
@@ -35,6 +51,32 @@ export default function contact() {
       icon: "contact.svg",
     },
   ];
+  const location = useLocation();
+
+  const queryUsers = async (username: string) => {
+    console.log(location.pathname);
+
+    if (location.pathname === "/contact") {
+      const res = contactList.filter(
+        (item) =>
+          item.username.includes(inputValue) ||
+          item.nickname.includes(inputValue)
+      );
+      setQueryList(res);
+    } else {
+      const res = await Request.get(`/user/query?username=${username}`);
+      setQueryList(res.data.users);
+    }
+  };
+
+  const applyAddRequest = async (friend_username: string) => {
+    /*
+     * @TODO: redux 不存在用户信息判断
+     */
+    const res = await Request.post(`/contact/add`, {
+      friend_username,
+    });
+  };
 
   useEffect(() => {
     const userinfo = readLocalItem("userinfo");
@@ -47,67 +89,70 @@ export default function contact() {
         setRequestList(data.requests);
       }
     );
-    Request.get(`/contact?id=${userinfo.username}`).then((res) => {
+    Request.get(`/contact?username=${userinfo.username}`).then((res) => {
       const friends = res.data.friendsList as Array<any>;
       setContactList(friends);
     });
   }, []);
 
   return (
-    <>
-      <div className="p-2 space-y-1 w-1/4 bg-white">
-        {/* 侧边选项 */}
-        {sideList.map((item, index) => (
-          <Link
-            to={item.to}
-            key={item.name}
-            onClick={() => setCurrentIndex(index)}
-          >
-            <div
-              className={
-                "flex items-center px-3 space-x-3 text-sm w-full h-12 rounded-md cursor-pointer hover:bg-slate-200 " +
-                (index === currentIndex ? "bg-slate-200" : " ")
-              }
-            >
-              <div className="w-6 h-6 rounded-full overflow-hidden">
-                <img src={`/src/assets/contact/${item.icon}`} alt="" />
-              </div>
-              <div className="">{item.name}</div>
-            </div>
-          </Link>
-        ))}
+    <div className="flex flex-col px-10">
+      <div className="flex justify-center my-16 space-x-4">
+        <Input
+          style="w-3/5"
+          value={inputValue}
+          onChange={(e: any) => setInputValue(e)}
+        ></Input>
+        <Button onClick={() => queryUsers(inputValue)}>查找</Button>
       </div>
-      <div className="w-3/4 bg-slate-50 px-2 py-1">
-        <div className="flex items-center justify-between px-2 w-full rounded hover:bg-slate-200">
-          <Routes>
-            {/* 好友申请列表 */}
-            <Route
-              element={
-                <>
-                  {requestList?.map((item) => (
-                    <RequestItem
-                      key={item.friend_id}
-                      questInfo={item}
-                    ></RequestItem>
-                  ))}
-                </>
-              }
-              path="request"
-            ></Route>
-            {/* 好友列表 */}
-            <Route
-              element={
-                <>
-                  {contactList?.map((item) => (
-                    <PersonItem key={item.username} user={item}></PersonItem>
-                  ))}
-                </>
-              }
-              path=""
-            ></Route>
-          </Routes>
-        </div>
+      <div className="flex flex-col space-y-2 items-center justify-between px-2 w-full rounded">
+        <Routes>
+          {/* 好友申请列表 */}
+          <Route
+            element={
+              <>
+                {inputValue === ""
+                  ? requestList?.map((item) => (
+                      <RequestItem
+                        key={item.friend_username}
+                        questInfo={item}
+                      ></RequestItem>
+                    ))
+                  : queryList?.map((item) => (
+                      <div
+                        key={item.username}
+                        className="flex w-full items-center space-x-4"
+                      >
+                        <PersonItem user={item}></PersonItem>
+                        <Button
+                          style="w-32"
+                          onClick={() => applyAddRequest(item.username)}
+                        >
+                          申请好友
+                        </Button>
+                      </div>
+                    ))}
+              </>
+            }
+            path="request"
+          ></Route>
+          {/* 好友列表 */}
+          <Route
+            element={
+              <>
+                {inputValue === ""
+                  ? contactList?.map((item) => (
+                      <PersonItem key={item.username} user={item}></PersonItem>
+                    ))
+                  : queryList?.map((item) => (
+                      <PersonItem key={item.username} user={item}></PersonItem>
+                    ))}
+              </>
+            }
+            path=""
+          ></Route>
+        </Routes>
       </div>
-    </>
+    </div>
   );
 }
