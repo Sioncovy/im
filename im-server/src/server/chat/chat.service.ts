@@ -19,7 +19,7 @@ export class ChatService {
 
   async createChat(createChatDto: CreateChatDto) {
     const chatId = uuidv4();
-    const chat = await this.findOne(createChatDto.from);
+    const chat = await this.chatModel.findOne(createChatDto);
     if (chat) {
       return {
         code: 444,

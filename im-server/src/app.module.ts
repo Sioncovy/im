@@ -11,6 +11,9 @@ import { config } from './config';
 import { ChatModule } from './server/chat/chat.module';
 import { ChatGateway } from './server/chat/chat.gateway';
 import { ContactModule } from './server/contact/contact.module';
+import { FileModule } from './server/file/file.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import * as path from 'path';
 
 @Module({
   imports: [
@@ -22,6 +25,10 @@ import { ContactModule } from './server/contact/contact.module';
     EmailModule,
     ChatModule,
     ContactModule,
+    FileModule,
+    ServeStaticModule.forRoot({
+      rootPath: path.join(__dirname, '..', 'uploads'),
+    }),
   ],
   controllers: [AppController],
   providers: [

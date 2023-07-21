@@ -9,6 +9,7 @@ export const config = {
     host: '127.0.0.1',
     db: 0,
   },
+  host: 'http://localhost:4000',
 };
 
 export const emailConfig = {

@@ -1,22 +1,17 @@
-import React, { useEffect, useState } from "react";
-import Button from "../../components/button/button";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from 'react'
+import Button from '../../components/button/button'
+import { Link } from 'react-router-dom'
 
-export default function settingSide() {
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
+export default function SettingSide() {
+  const [currentIndex, setCurrentIndex] = useState<number>(0)
 
   const sideList = [
     {
-      name: "个人资料",
-      to: "/setting/profile",
-      // icon: "/src/assets/contact/request.svg",
-    },
-    {
-      name: "退出登录",
-      to: "/setting/logout",
-      // icon: "/src/assets/contact/contacts.svg",
-    },
-  ];
+      name: '个人资料',
+      to: '/setting/profile',
+      icon: '/src/assets/contact/request.svg'
+    }
+  ]
   return (
     <div className="p-2 space-y-1">
       {/* 侧边选项 */}
@@ -28,8 +23,8 @@ export default function settingSide() {
         >
           <div
             className={
-              "flex items-center px-3 space-x-3 text-sm w-full h-12 rounded-md cursor-pointer hover:bg-slate-200 " +
-              (index === currentIndex ? "bg-slate-200" : " ")
+              'flex items-center px-3 space-x-3 text-sm w-full h-12 rounded-md cursor-pointer hover:bg-slate-200 ' +
+              (index === currentIndex ? 'bg-slate-200' : ' ')
             }
           >
             <div className="w-6 h-6 overflow-hidden">

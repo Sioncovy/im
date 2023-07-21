@@ -1,63 +1,53 @@
-/*
- * @Author: Sioncovy 1298184727@qq.com
- * @Date: 2022-10-22 00:22:38
- * @LastEditors: Sioncovy 1298184727@qq.com
- * @LastEditTime: 2022-10-26 14:23:26
- * @FilePath: \im\im-client\src\pages\chat\chat.tsx
- * @Description:
- *
- * Copyright (c) 2022 by Sioncovy 1298184727@qq.com, All Rights Reserved.
- */
-import React, { useEffect, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../hooks/storeHook";
-import { useParams, useLocation } from "react-router";
-import Request from "../../utils/axios";
-import { UserInfoType } from "../../interfaces/user";
-import Message from "./components/message";
-import InputBox from "./components/inputbox";
-import { socket } from "../../utils/socket";
-import Button from "../../components/button/button";
+import React, { useEffect, useRef, useState } from 'react'
+import { useAppDispatch, useAppSelector } from '../../hooks/storeHook'
+import { useParams, useLocation } from 'react-router'
+import Request from '../../utils/axios'
+import { UserInfoType } from '../../interfaces/user'
+import Message from './components/message'
+import InputBox from './components/inputbox'
+import { socket } from '../../utils/socket'
+import Button from '../../components/button/button'
 
 interface MsgResponse {
-  chatId: string;
-  from: string;
-  msg: string;
-  msg_id: string;
-  send_time: number;
+  chatId: string
+  from: string
+  msg: string
+  msg_id: string
+  send_time: number
 }
 
 export default function ChatMain() {
-  const { chatId } = useParams();
-  const { state } = useLocation();
-  const friendinfo = state as UserInfoType;
-  const { userinfo } = useAppSelector((store) => store.user);
+  const { chatId } = useParams()
+  const { state } = useLocation()
+  const friendinfo = state as UserInfoType
+  const { userinfo } = useAppSelector((store) => store.user)
 
-  const [msgList, setMsgList] = useState([]);
-  const msgListRef = useRef<HTMLDivElement>(null);
+  const [msgList, setMsgList] = useState([])
+  const msgListRef = useRef<HTMLDivElement>(null)
 
   const scollToBottom = () => {
     if (msgListRef && msgListRef.current) {
-      msgListRef.current.scrollIntoView({ behavior: "smooth" });
+      msgListRef.current.scrollIntoView({ behavior: 'smooth' })
     }
-  };
+  }
 
   useEffect(() => {
     // console.log(state);
     Request.get(`/chat/msg/${chatId}`).then((res) => {
-      setMsgList(res.data.msgList);
-      scollToBottom();
-    });
-    socket.emit("updateChat", (res: any) => {
-      console.log(res);
-    });
+      setMsgList(res.data.msgList)
+      scollToBottom()
+    })
+    socket.emit('updateChat', (res: any) => {
+      console.log(res)
+    })
     // socket.on("updateChat", (res) => {-+++++++++
     //   console.log(res);
     // });
-  }, []);
+  }, [])
 
   useEffect(() => {
-    scollToBottom();
-  }, [msgList]);
+    scollToBottom()
+  }, [msgList])
 
   return (
     <div className="flex flex-col relative w-full h-full bg-slate-50">
@@ -87,5 +77,5 @@ export default function ChatMain() {
         ></InputBox>
       </div>
     </div>
-  );
+  )
 }

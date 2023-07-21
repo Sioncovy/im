@@ -2,7 +2,7 @@ import { Injectable, forwardRef, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './user.interface';
 import { Model } from 'mongoose';
-import { CreateUserDto } from './user.dto';
+import { CreateUserDto } from './dto/user.dto';
 import { makesalt, encryptPassword } from 'src/utils/cryptogram';
 import { AuthService } from 'src/auth/auth.service';
 
@@ -92,5 +92,20 @@ export class UserService {
       },
       msg: '请求成功',
     };
+  }
+
+  async updateOne(username: string, profile: any) {
+    try {
+      await this.userModule.findOneAndUpdate({ username }, { ...profile });
+      return {
+        code: 200,
+        msg: '更新成功',
+      };
+    } catch (err) {
+      return {
+        code: 444,
+        msg: '更新失败',
+      };
+    }
   }
 }

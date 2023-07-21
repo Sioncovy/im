@@ -1,16 +1,29 @@
-import { Body, Controller, Get, Query, Post, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Query,
+  Post,
+  Req,
+  UseInterceptors,
+  UploadedFile,
+} from '@nestjs/common';
 import { Userinfo, Login, Register } from './user.interface';
 import { UserService } from './user.service';
 import { ToolsService } from 'src/utils/tools.service';
+import { FileService } from '../file/file.service';
 import { Public } from 'src/decorators/public.decorator';
 import { RedisIntance } from 'src/utils/redis';
 import { Request } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { config } from 'src/config';
 
 @Controller('user')
 export class UserController {
   constructor(
     private userService: UserService,
     private toolsService: ToolsService,
+    private fileService: FileService,
   ) {}
 
   @Get('/')
@@ -84,5 +97,11 @@ export class UserController {
     const { username } = query;
 
     return await this.userService.findAll(username);
+  }
+
+  @Post('update')
+  async updateProfile(@Body() body: any, @Req() req: Request) {
+    const { username } = req.user as Userinfo;
+    return await this.userService.updateOne(username, body);
   }
 }

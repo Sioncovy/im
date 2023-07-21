@@ -1,13 +1,3 @@
-/*
- * @Author: Sioncovy 1298184727@qq.com
- * @Date: 2022-10-22 00:22:38
- * @LastEditors: Sioncovy 1298184727@qq.com
- * @LastEditTime: 2022-10-26 04:46:06
- * @FilePath: \im\im-client\src\pages\contact\components\request.tsx
- * @Description:
- *
- * Copyright (c) 2022 by Sioncovy 1298184727@qq.com, All Rights Reserved.
- */
 import React, { useEffect, useState } from "react";
 import Button from "../../../components/button/button";
 import Request from "../../../utils/axios";

@@ -65,6 +65,8 @@ export class ContactService {
         type: 1,
         relation_count: 0,
       });
+      console.log('from:', username, ' to:', friend_username);
+
       this.chatService.createChat({ from: username, to: friend_username });
       return {
         code: 200,

@@ -28,6 +28,9 @@ export default function home() {
     // message.error("哒咩哟");
 
     // console.log(useLocation());
+    socket.emit('createWebsocket', (res: any) => {
+      console.log(res);
+    })
 
     const token = readLocalItem("token");
     if (!token) {
