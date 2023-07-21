@@ -30,14 +30,14 @@ export default function Person(props: PropsType) {
 
   const router = useNavigate();
 
-  // const startChat = async () => {
-  //   Request.get(`/chat/query/${user.username}`).then((res) => {
-  //     const { chatInfo } = res.data;
-  //     const { chatId }: Chat = chatInfo;
-  //     console.log(chatInfo);
-  //     router(`/${chatId}`, { state: user });
-  //   });
-  // };
+  const startChat = async () => {
+    Request.get(`/chat/query/${user.username}`).then((res) => {
+      const { chatInfo } = res.data;
+      const { chatId }: Chat = chatInfo;
+      console.log(chatInfo);
+      router(`/${chatId}`, { state: user });
+    });
+  };
 
   return (
     <div

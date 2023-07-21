@@ -7,11 +7,12 @@ import { socket } from "../../../utils/socket";
 interface InputBoxProps {
   chatId: string;
   from: string;
+  to: string;
 }
 
 const InputBox: React.FC<InputBoxProps> = (props) => {
   const [msg, setMsg] = useState("");
-  const { chatId, from } = props;
+  const { chatId, from, to } = props;
 
   const sendMsg = () => {
     Request.post("/chat/send", { chatId, from, msg });

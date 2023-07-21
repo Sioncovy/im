@@ -34,11 +34,11 @@ export class ChatController {
     return await this.chatService.findAll(username);
   }
 
-  @Get('query/:friend_id')
-  async findOne(@Req() req, @Param('friend_id') friend_id: string) {
+  @Get('query/:friend_username')
+  async findOne(@Req() req, @Param('friend_username') friend_username: string) {
     const { username }: { username: string } = req.user;
     return await this.chatService.findOne(
-      { from: username, to: friend_id },
+      { from: username, to: friend_username },
       { _id: 0, __v: 0 },
     );
   }

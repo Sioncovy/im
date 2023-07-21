@@ -1,6 +1,6 @@
 export class CreateContactDto {
-  id: number;
-  friend_id: number;
+  username: string;
+  friend_username: string;
   relation_count?: number;
   relation?: string;
   type?: number;

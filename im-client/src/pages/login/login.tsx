@@ -13,6 +13,7 @@ export default function login() {
   const [codeImg, setCodeImg] = useState<any>();
   const [code, setCode] = useState<any>();
   const [timestamp, setTimestamp] = useState(new Date().getTime());
+  console.log(new Date().getTime());
 
   const router = useNavigate();
 
@@ -34,7 +35,6 @@ export default function login() {
   };
 
   const registerHandle = async () => {
-    console.log("click");
     const res: any = await Request.post("/user/register", {
       username,
       password,

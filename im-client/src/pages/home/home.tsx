@@ -1,21 +1,3 @@
-/*
- * @Author: Sioncovy 1298184727@qq.com
- * @Date: 2022-10-22 00:22:38
- * @LastEditors: Sioncovy 1298184727@qq.com
- * @LastEditTime: 2022-10-26 14:23:49
- * @FilePath: \im\im-client\src\pages\home\home.tsx
- * @Description:
- *
- * Copyright (c) 2022 by Sioncovy 1298184727@qq.com, All Rights Reserved.
- */
-/*
- * @Author: Sioncovy 1298184727@qq.com
- * @Date: 2022-10-22 00:22:38
- * @LastEditors: Sioncovy 1298184727@qq.com
- * @LastEditTime: 2022-10-26 02:30:36
- * @FilePath: \im\im-client\src\pages\home\home.tsx
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- */
 import React, { useEffect, useState } from "react";
 import { readLocalItem, saveLocalItem } from "../../utils/storage";
 import { useNavigate } from "react-router";
@@ -29,16 +11,18 @@ import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
 import Chat from "../chat/chat";
 import { setUserinfo } from "../../store/features/userSlice";
 import { useAppDispatch } from "../../hooks/storeHook";
-import { UserInfoType } from "../../interfaces/user";
+import { User } from "../../interfaces/user";
 import ContactSide from "../contact/contactSide";
 import ChatSide from "../chat/chatSide";
+import Setting from "../user/setting";
+import SettingSide from "../user/settingSide";
 
 export default function home() {
   const router = useNavigate();
   const dispatch = useAppDispatch();
 
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [user, setUser] = useState<UserInfoType>();
+  const [user, setUser] = useState<User>();
 
   useEffect(() => {
     // message.error("哒咩哟");
@@ -72,6 +56,11 @@ export default function home() {
       to: "/contact",
       icon: "/src/assets/homeSide/contacts.svg",
     },
+    {
+      name: '设置',
+      to: '/setting',
+      icon: '/src/assets/homeSide/setting.svg'
+    }
   ];
 
   return (
@@ -99,16 +88,17 @@ export default function home() {
       </div>
       {/* 消息栏 */}
       <div className=" bg-white w-[20%] border-1">
-        <div className="flex justify-center items-center">
-          <Input
-            style="h-8 w-full mx-3 mt-6 mb-3 px-3 border-1 text-center rounded-xl bg-white placeholder-gray-400 focus:text-left"
-            text="搜索"
-            value=""
-          />
-        </div>
+        {/*<div className="flex justify-center items-center">*/}
+        {/*  <Input*/}
+        {/*    style="h-8 w-full mx-3 mt-6 mb-3 px-3 border-1 text-center rounded-xl bg-white placeholder-gray-400 focus:text-left"*/}
+        {/*    text="搜索"*/}
+        {/*    value=""*/}
+        {/*  />*/}
+        {/*</div>*/}
         <div className="">
           <Routes>
             <Route element={<ChatSide></ChatSide>} path="/*"></Route>
+            <Route element={<SettingSide></SettingSide>} path="/setting/*"></Route>
             <Route
               element={<ContactSide></ContactSide>}
               path="/contact/*"
@@ -121,6 +111,7 @@ export default function home() {
         <Routes>
           <Route element={<Chat></Chat>} path=":chatId"></Route>
           <Route element={<Contact></Contact>} path="/contact/*"></Route>
+          <Route element={<Setting></Setting>} path="/setting/*"></Route>
         </Routes>
       </div>
     </div>

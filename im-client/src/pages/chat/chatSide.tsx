@@ -11,7 +11,7 @@
 import React, { useState, useEffect } from "react";
 import { Route, Routes, Link, useNavigate } from "react-router-dom";
 import Request from "../../utils/axios";
-import ChatMain from "./chatMain";
+// import ChatMain from "./chatMain";
 import { setFriendinfo } from "../../store/features/userSlice";
 import { useAppDispatch, useAppSelector } from "../../hooks/storeHook";
 import { UserInfoType } from "../../interfaces/user";

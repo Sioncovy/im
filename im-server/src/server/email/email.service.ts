@@ -25,7 +25,7 @@ export class EmailService {
           date,
           sign: data.sign || '系统邮件，回复无效',
         },
-        from: '信笔科技 <mailpen@sioncovy.top>',
+        from: '信笔科技 <xiongkangwei@sion.ink>',
         // attachments: [
         //   {
         //     filename: 'validate.code.ejs', //文件名

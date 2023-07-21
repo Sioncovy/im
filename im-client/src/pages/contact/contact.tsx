@@ -1,13 +1,3 @@
-/*
- * @Author: Sioncovy 1298184727@qq.com
- * @Date: 2022-10-22 00:22:38
- * @LastEditors: Sioncovy 1298184727@qq.com
- * @LastEditTime: 2022-10-26 05:17:58
- * @FilePath: \im\im-client\src\pages\contact\contact.tsx
- * @Description:
- *
- * Copyright (c) 2022 by Sioncovy 1298184727@qq.com, All Rights Reserved.
- */
 import React, { useEffect, useState } from "react";
 import RequestItem from "./components/request";
 import PersonItem from "./components/person";
@@ -16,7 +6,7 @@ import { readLocalItem, saveLocalItem } from "../../utils/storage";
 import { Routes, Route, Link, useLocation } from "react-router-dom";
 import Input from "../../components/input/input";
 import Button from "../../components/button/button";
-import { UserInfoType } from "../../interfaces/user";
+import { User } from "../../interfaces/user";
 // import { useAppSelector } from "../../hooks/storeHook";
 
 interface RequestType {
@@ -35,7 +25,7 @@ interface ContactType {
 export default function Contact() {
   const [requestList, setRequestList] = useState<RequestType[]>([]);
   const [contactList, setContactList] = useState<ContactType[]>([]);
-  const [queryList, setQueryList] = useState<UserInfoType[]>([]);
+  const [queryList, setQueryList] = useState<User[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
   const [currentIndex, setCurrentIndex] = useState<number>(1);
 
@@ -48,7 +38,7 @@ export default function Contact() {
     {
       name: "联系人",
       to: "/contact",
-      icon: "contact.svg",
+      icon: "contacts.svg",
     },
   ];
   const location = useLocation();
@@ -74,7 +64,7 @@ export default function Contact() {
      * @TODO: redux 不存在用户信息判断
      */
     const res = await Request.post(`/contact/add`, {
-      friend_username,
+      friend_username: friend_username,
     });
   };
 

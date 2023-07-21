@@ -49,6 +49,7 @@ export class UserController {
     const { username, password, code } = body;
     const redis = await RedisIntance.initRedis('user.register', 0);
     const rawcode = await redis.get(`emailCode-${username}`);
+    console.log('邮箱验证码', username, rawcode);
     if (
       username.length < 6 ||
       password.length < 6 ||

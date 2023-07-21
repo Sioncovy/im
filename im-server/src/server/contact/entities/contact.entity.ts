@@ -6,10 +6,10 @@ export type ContactDocument = Contact & Document;
 @Schema()
 export class Contact {
   @Prop({ required: true })
-  id: string;
+  username: string;
 
   @Prop({ required: true })
-  friend_id: string;
+  friend_username: string;
 
   @Prop()
   relation_count: number; // 亲密度

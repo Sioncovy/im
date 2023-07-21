@@ -40,7 +40,7 @@ export default function ContactSide() {
     {
       name: "联系人",
       to: "/contact",
-      icon: "/src/assets/contact/contact.svg",
+      icon: "/src/assets/contact/contacts.svg",
     },
   ];
   return (
@@ -58,7 +58,7 @@ export default function ContactSide() {
               (index === currentIndex ? "bg-slate-200" : " ")
             }
           >
-            <div className="w-6 h-6 rounded-full overflow-hidden">
+            <div className="w-6 h-6 overflow-hidden">
               <img src={item.icon} alt="" />
             </div>
             <div className="">{item.name}</div>

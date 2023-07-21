@@ -80,7 +80,11 @@ export default function ChatMain() {
       </div>
       {/* <div className="absolute left-4 right-4 bottom-4"> */}
       <div className="h-20 px-4 w-full self-end flex items-center">
-        <InputBox chatId={chatId!} from={userinfo!.username}></InputBox>
+        <InputBox
+          chatId={chatId!}
+          from={userinfo!.username}
+          to={friendinfo.username}
+        ></InputBox>
       </div>
     </div>
   );

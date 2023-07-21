@@ -33,7 +33,7 @@ export class ContactService {
   async getAllRequest(username: string) {
     try {
       const requests = await this.contactModel.find(
-        { type: 0, friend_id: username },
+        { type: 0, friend_username: username },
         { _id: 0, __v: 0 },
       );
       return {
@@ -53,19 +53,19 @@ export class ContactService {
     // return `This action returns all contact`;
   }
 
-  async agree(id, fid) {
+  async agree(username: string, friend_username: string) {
     try {
       await this.contactModel.findOneAndUpdate(
-        { id, friend_id: fid },
+        { username, friend_username },
         { type: 1, relation_count: 0 },
       );
       await this.contactModel.create({
-        id: fid,
-        friend_id: id,
+        username: friend_username,
+        friend_username: username,
         type: 1,
         relation_count: 0,
       });
-      this.chatService.createChat({ from: id, to: fid });
+      this.chatService.createChat({ from: username, to: friend_username });
       return {
         code: 200,
         msg: '同意好友申请成功',
@@ -78,17 +78,18 @@ export class ContactService {
     }
   }
 
-  async allFriend(id) {
+  async allFriend(username: string) {
     try {
-      const friends = await this.contactModel.find(
-        { id, type: 1 },
+      const friends = (await this.contactModel.find(
+        { username, type: 1 },
         { _id: 0, __v: 0 },
-      );
+      )) as { username: string; friend_username: string }[];
+
       const len = friends.length;
       const friendsList = [];
       for (let i = 0; i < len; i++) {
         friendsList.push(
-          await this.userService.findOne(friends[i].friend_id, {
+          await this.userService.findOne(friends[i].friend_username, {
             _id: 0,
             __v: 0,
             salt: 0,
