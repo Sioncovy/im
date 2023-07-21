@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import Input from '../../components/input/input'
 import Button from '../../components/button/button'
-import { Route, Routes } from 'react-router-dom'
-import RequestItem from '../contact/components/request'
-import PersonItem from '../contact/components/person'
 import Request from '../../utils/axios'
 import { message } from '../../components/message/message'
+import { readLocalItem } from '../../utils/storage'
 
 type profileType = {
   avatar?: string
@@ -19,6 +17,14 @@ export default function Profile() {
     nickname: '',
     bio: ''
   })
+  useEffect(() => {
+    const userinfo = readLocalItem('userinfo')
+    setProfile({
+      avatar: userinfo.avatar,
+      nickname: userinfo.nickname,
+      bio: userinfo.bio
+    })
+  }, [])
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     const res = await Request.post(

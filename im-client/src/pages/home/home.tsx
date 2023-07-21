@@ -1,70 +1,70 @@
-import React, { useEffect, useState } from "react";
-import { readLocalItem, saveLocalItem } from "../../utils/storage";
-import { useNavigate } from "react-router";
-import { message } from "../../components/message/message";
-import Input from "../../components/input/input";
-import Button from "../../components/button/button";
-import { socket } from "../../utils/socket";
-import Request from "../../utils/axios";
-import Contact from "../contact/contact";
-import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
-import Chat from "../chat/chat";
-import { setUserinfo } from "../../store/features/userSlice";
-import { useAppDispatch } from "../../hooks/storeHook";
-import { User } from "../../interfaces/user";
-import ContactSide from "../contact/contactSide";
-import ChatSide from "../chat/chatSide";
-import Setting from "../user/setting";
-import SettingSide from "../user/settingSide";
+import React, { useEffect, useState } from 'react'
+import { readLocalItem, saveLocalItem } from '../../utils/storage'
+import { useNavigate } from 'react-router'
+import { message } from '../../components/message/message'
+import Input from '../../components/input/input'
+import Button from '../../components/button/button'
+import { socket } from '../../utils/socket'
+import Request from '../../utils/axios'
+import Contact from '../contact/contact'
+import { Routes, Route, Link, Navigate, useLocation } from 'react-router-dom'
+import Chat from '../chat/chat'
+import { setUserinfo } from '../../store/features/userSlice'
+import { useAppDispatch } from '../../hooks/storeHook'
+import { UserInfoType } from '../../interfaces/user'
+import ContactSide from '../contact/contactSide'
+import ChatSide from '../chat/chatSide'
+import Setting from '../user/setting'
+import SettingSide from '../user/settingSide'
 
 export default function home() {
-  const router = useNavigate();
-  const dispatch = useAppDispatch();
+  const router = useNavigate()
+  const dispatch = useAppDispatch()
 
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [user, setUser] = useState<User>();
+  const [currentIndex, setCurrentIndex] = useState<number>(0)
+  const [user, setUser] = useState<UserInfoType>()
 
   useEffect(() => {
     // message.error("哒咩哟");
 
     // console.log(useLocation());
     socket.emit('createWebsocket', (res: any) => {
-      console.log(res);
+      console.log(res)
     })
 
-    const token = readLocalItem("token");
+    const token = readLocalItem('token')
     if (!token) {
-      router("/login");
+      router('/login')
     }
-    Request.get("/user").then((res: any) => {
-      saveLocalItem("userinfo", res);
-      setUser(res);
-      dispatch(setUserinfo(res));
-    });
+    Request.get('/user').then((res: any) => {
+      saveLocalItem('userinfo', res)
+      setUser(res)
+      dispatch(setUserinfo(res))
+    })
 
     // console.log(msg);
-  }, []);
+  }, [])
 
   // const location = useLocation();
   // console.log(location);
 
   const sideList = [
     {
-      name: "消息",
-      to: "/",
-      icon: "/src/assets/homeSide/msg.svg",
+      name: '消息',
+      to: '/',
+      icon: '/src/assets/homeSide/msg.svg'
     },
     {
-      name: "联系人",
-      to: "/contact",
-      icon: "/src/assets/homeSide/contacts.svg",
+      name: '联系人',
+      to: '/contact',
+      icon: '/src/assets/homeSide/contacts.svg'
     },
     {
       name: '设置',
       to: '/setting',
       icon: '/src/assets/homeSide/setting.svg'
     }
-  ];
+  ]
 
   return (
     <div className="flex h-[900px] w-[1440px] bg-slate-300">
@@ -101,7 +101,10 @@ export default function home() {
         <div className="">
           <Routes>
             <Route element={<ChatSide></ChatSide>} path="/*"></Route>
-            <Route element={<SettingSide></SettingSide>} path="/setting/*"></Route>
+            <Route
+              element={<SettingSide></SettingSide>}
+              path="/setting/*"
+            ></Route>
             <Route
               element={<ContactSide></ContactSide>}
               path="/contact/*"
@@ -118,5 +121,5 @@ export default function home() {
         </Routes>
       </div>
     </div>
-  );
+  )
 }
