@@ -33,6 +33,9 @@ export default function ChatSide() {
     bio: '',
     username: ''
   })
+  const [currentChatId, setCurrentChatId] = useState<string>('')
+  // 未读消息，map<chatId, number>
+  const [unreadMsg, setUnreadMsg] = useState<Map<string, number>>(new Map())
 
   const router = useNavigate()
 
@@ -40,11 +43,38 @@ export default function ChatSide() {
 
   useEffect(() => {
     Request.get('/chat').then((res) => {
+      console.log('chatList', res.data.chatList)
+
       setChatList(res.data.chatList)
+      res.data.chatList.forEach((chat: Chat) => {
+        socket.emit('joinChat', chat.chatId)
+        setUnreadMsg((prev) => {
+          const map = new Map(prev)
+          map.set(chat.chatId, 0)
+          return map
+        })
+      })
+    })
+    socket.on('notifyMessage', (res) => {
+      setUnreadMsg((prev) => {
+        const map = new Map(prev)
+        if (currentChatId === res.data.chatId) {
+          map.set(res.data.chatId, 0)
+        } else {
+          map.set(res.data.chatId, prev.get(res.data.chatId)! + 1)
+        }
+        return map
+      })
     })
   }, [])
 
   const startChat = (friendinfo: UserInfoType, chatId: string) => {
+    setUnreadMsg((prev) => {
+      const map = new Map(prev)
+      map.set(chatId, 0)
+      return map
+    })
+    setCurrentChatId(chatId)
     setCurrentFriendInfo(friendinfo)
     router(`/${chatId}`, { state: friendinfo })
   }
@@ -83,8 +113,13 @@ export default function ChatSide() {
                   }) ?? '未知'}
                 </div>
               </div>
-              <div className="text-xs max-w-full h-4 overflow-hidden text-gray-500">
-                {item?.last_msg ?? ''}
+              <div className="flex justify-between text-xs max-w-full h-4 overflow-hidden text-gray-500">
+                <div>{item?.last_msg ?? ''}</div>
+                {unreadMsg.get(item.chatId) ? (
+                  <div className="flex justify-center text-white rounded-full bg-red-400 border-box px-1 min-w-[1rem]">
+                    {unreadMsg.get(item.chatId)}
+                  </div>
+                ) : null}
               </div>
             </div>
           </div>

@@ -14,14 +14,11 @@ export class Message {
   @Prop({ required: true })
   from: string; // 发送者 id
 
-  @Prop()
-  chat_type: number; // 0.系统消息/1.个人聊天/2.群组消息
+  @Prop({ required: true })
+  type: number; // 0：普通消息  1：图片  2：文件
 
   @Prop({ required: true })
   msg: string;
-
-  @Prop()
-  message_type: number; // 文字/图片/文件/音乐
 
   @Prop({ required: true })
   send_time: number;

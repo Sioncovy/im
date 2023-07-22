@@ -7,14 +7,12 @@ import { ChatDocument, Chat } from './entities/chat.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateMsgDto } from './dto/create-msg.dto';
 import { Message, MessageDocument } from './entities/message.entity';
-import { ChatGateway } from './chat.gateway';
 
 @Injectable()
 export class ChatService {
   constructor(
     @InjectModel('chat') private readonly chatModel: Model<ChatDocument>,
     @InjectModel('message') private messageModel: Model<MessageDocument>,
-    private readonly ws: ChatGateway,
   ) {}
 
   async createChat(createChatDto: CreateChatDto) {
@@ -117,10 +115,12 @@ export class ChatService {
     try {
       const uuid = uuidv4();
       const time = new Date().getTime();
+      const type = typeof createMsgDto.msg === 'string' ? 0 : 1;
       const newMsg = await this.messageModel.create({
         ...createMsgDto,
         msg_id: uuid,
         send_time: time,
+        type,
       });
       const { chatId, msg } = createMsgDto;
       const res = await this.chatModel.updateMany(
@@ -131,8 +131,11 @@ export class ChatService {
           last_time: time,
         },
       );
-      console.log(res);
-      this.ws.server.emit('updateChat');
+      return {
+        code: 200,
+        data: newMsg,
+        msg: '',
+      };
     } catch (err) {
       return {
         code: 444,

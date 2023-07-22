@@ -6,6 +6,7 @@ import {
   MessageBody,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { ChatService } from './chat.service';
 
 const clientMap = new Map();
 
@@ -15,9 +16,24 @@ const clientMap = new Map();
 export class ChatGateway {
   @WebSocketServer() server: Server;
 
-  handleConnection(client) {
+  constructor(private chatService: ChatService) {}
+
+  @SubscribeMessage('connection')
+  handleConnection(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: any,
+  ) {
     // 添加连接的客户端到 Map
     clientMap.set(client.id, client);
+  }
+
+  @SubscribeMessage('joinChat')
+  handleJoinChat(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: any,
+  ) {
+    client.join(payload);
+    return 'ok';
   }
 
   handleDisconnect(client) {
@@ -25,14 +41,16 @@ export class ChatGateway {
     clientMap.delete(client.id);
   }
 
-  @SubscribeMessage('message')
-  handleMessage(
+  @SubscribeMessage('sendMessage')
+  async handleSendMessage(
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: any,
-  ): string {
-    console.log('Hello World!');
-    const receiverSocket = clientMap.get(payload.receiverId);
-    receiverSocket.emit('notifyMessage', payload);
-    return 'Hello World!';
+  ) {
+    const msg = await this.chatService.createMsg(payload);
+    if (msg?.code === 200) {
+      client.to(payload.chatId).emit('notifyMessage', msg);
+    } else {
+      client.emit('notifyMessage', msg);
+    }
   }
 }

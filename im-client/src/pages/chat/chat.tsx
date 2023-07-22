@@ -14,6 +14,7 @@ interface MsgResponse {
   msg: string
   msg_id: string
   send_time: number
+  type: number
 }
 
 export default function ChatMain() {
@@ -22,7 +23,7 @@ export default function ChatMain() {
   const friendinfo = state as UserInfoType
   const { userinfo } = useAppSelector((store) => store.user)
 
-  const [msgList, setMsgList] = useState([])
+  const [msgList, setMsgList] = useState<MsgResponse[]>([])
   const msgListRef = useRef<HTMLDivElement>(null)
 
   const scollToBottom = () => {
@@ -32,17 +33,17 @@ export default function ChatMain() {
   }
 
   useEffect(() => {
-    // console.log(state);
+    console.log('chatId', chatId)
+
     Request.get(`/chat/msg/${chatId}`).then((res) => {
       setMsgList(res.data.msgList)
       scollToBottom()
     })
-    socket.emit('updateChat', (res: any) => {
-      console.log(res)
+    socket.on('notifyMessage', (res) => {
+      if (chatId === res.data.chatId) {
+        setMsgList((prev) => [...prev, res.data])
+      }
     })
-    // socket.on("updateChat", (res) => {-+++++++++
-    //   console.log(res);
-    // });
   }, [])
 
   useEffect(() => {

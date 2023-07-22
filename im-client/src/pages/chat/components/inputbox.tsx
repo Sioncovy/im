@@ -1,30 +1,31 @@
-import React, { useState } from "react";
-import Input from "../../../components/input/input";
-import Button from "../../../components/button/button";
-import Request from "../../../utils/axios";
-import { socket } from "../../../utils/socket";
+import React, { useState } from 'react'
+import Input from '../../../components/input/input'
+import Button from '../../../components/button/button'
+import Request from '../../../utils/axios'
+import { socket } from '../../../utils/socket'
 
 interface InputBoxProps {
-  chatId: string;
-  from: string;
-  to: string;
+  chatId: string
+  from: string
+  to: string
 }
 
 const InputBox: React.FC<InputBoxProps> = (props) => {
-  const [msg, setMsg] = useState("");
-  const { chatId, from, to } = props;
+  const [msg, setMsg] = useState('')
+  const { chatId, from, to } = props
 
   const sendMsg = () => {
-    Request.post("/chat/send", { chatId, from, msg });
-    setMsg("");
-  };
+    // Request.post("/chat/send", { chatId, from, msg });
+    socket.emit('sendMessage', { chatId, from, msg })
+    setMsg('')
+  }
 
   return (
     <div className="flex space-x-4 w-full">
       <Input
         style="w-full"
         onChange={(e: any) => {
-          setMsg(e);
+          setMsg(e)
         }}
         value={msg}
       />
@@ -32,7 +33,7 @@ const InputBox: React.FC<InputBoxProps> = (props) => {
         发送
       </Button>
     </div>
-  );
-};
+  )
+}
 
-export default InputBox;
+export default InputBox

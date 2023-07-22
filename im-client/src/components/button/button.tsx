@@ -48,6 +48,8 @@ export default function Button(props: propsType) {
   const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     const { onClick } = props
     ;(onClick as React.MouseEventHandler<HTMLButtonElement>)?.(e)
+    // 阻止事件冒泡
+    e.stopPropagation()
   }
 
   const styleList = customStyle()

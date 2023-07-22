@@ -9,7 +9,6 @@ import { JwtAuthGuard } from './guards/auth.guard';
 import { EmailModule } from './server/email/email.module';
 import { config } from './config';
 import { ChatModule } from './server/chat/chat.module';
-import { ChatGateway } from './server/chat/chat.gateway';
 import { ContactModule } from './server/contact/contact.module';
 import { FileModule } from './server/file/file.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -31,10 +30,6 @@ import * as path from 'path';
     }),
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    { provide: APP_GUARD, useClass: JwtAuthGuard },
-    ChatGateway,
-  ],
+  providers: [AppService, { provide: APP_GUARD, useClass: JwtAuthGuard }],
 })
 export class AppModule {}
