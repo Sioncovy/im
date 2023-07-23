@@ -1,10 +1,9 @@
-import React from 'react'
-import Request from '../../../utils/axios'
-import { Link, useNavigate } from 'react-router-dom'
-import { useAppDispatch, useAppSelector } from '../../../hooks/storeHook'
-import { message } from '../../../components/message/message'
-import { Chat } from '../../../interfaces/chat'
-import { UserInfoType } from '../../../interfaces/user'
+import React from "react"
+import Request from "../../../utils/axios"
+import { Link, useNavigate } from "react-router-dom"
+import { message } from "../../../components/message/message"
+import { ChatType } from "../../../interfaces/chat"
+import { UserInfoType } from "../../../interfaces/user"
 
 interface PropsType {
   user: UserInfoType
@@ -12,14 +11,13 @@ interface PropsType {
 
 export default function Person(props: PropsType) {
   const { user } = props
-  const { userinfo } = useAppSelector((store) => store.user)
 
   const router = useNavigate()
 
   const startChat = async () => {
-    Request.get(`/chat/query/${user.username}`).then((res) => {
+    Request.get(`/chat/query/${user.username}`).then(res => {
       const { chatInfo } = res.data
-      const { chatId }: Chat = chatInfo
+      const { chatId }: ChatType = chatInfo
       console.log(chatInfo)
       router(`/${chatId}`, { state: user })
     })
@@ -36,7 +34,7 @@ export default function Person(props: PropsType) {
       <div className="space-y-1">
         <div className="text-sm font-semibold">{user?.nickname}</div>
         <div className="text-xs text-gray-500">
-          {user?.bio ?? '该用户什么也没写呢'}
+          {user?.bio ?? "该用户什么也没写呢"}
         </div>
       </div>
     </div>

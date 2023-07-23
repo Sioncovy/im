@@ -1,23 +1,23 @@
-import React, { useState } from "react";
-import { User } from "../../../interfaces/user";
-import time from "dayjs";
+import React, { useState } from "react"
+import { UserInfoType } from "../../../interfaces/user"
+import time from "dayjs"
 
 export interface MessageProps {
-  msginfo: {
-    msg_id: string;
-    chatId: string;
-    from: string;
-    chat_type?: number;
-    msg: string;
-    message_type?: number;
-    send_time: number;
-  };
-  userinfo: User;
-  isSelf: Boolean;
+  msgInfo: {
+    msg_id: string
+    chatId: string
+    from: string
+    chat_type?: number
+    msg: string
+    message_type?: number
+    send_time: number
+  }
+  userinfo: UserInfoType
+  isSelf: Boolean
 }
 
-const Message: React.FC<MessageProps> = ({ msginfo, userinfo, isSelf }) => {
-  const [timeDisplay, setTimeDisplay] = useState(false);
+const Message: React.FC<MessageProps> = ({ msgInfo, userinfo, isSelf }) => {
+  const [timeDisplay, setTimeDisplay] = useState(false)
 
   return (
     <div
@@ -48,12 +48,12 @@ const Message: React.FC<MessageProps> = ({ msginfo, userinfo, isSelf }) => {
             }
           >
             {/* <div className="">{msginfo.msg}</div> */}
-            {msginfo?.msg}
+            {msgInfo?.msg}
           </div>
           <div className="flex flex-col text-xs justify-end text-gray-500">
             {timeDisplay ? (
               <div className={"" + (isSelf ? "text-end" : "")}>
-                {time(msginfo?.send_time).calendar(null, {
+                {time(msgInfo?.send_time).calendar(null, {
                   sameDay: "A HH:mm", // The same day ( Today at 2:30 AM )
                   nextDay: "", // The next day ( Tomorrow at 2:30 AM )
                   nextWeek: "[下周] dddd", // The next week ( Sunday at 2:30 AM )
@@ -68,7 +68,7 @@ const Message: React.FC<MessageProps> = ({ msginfo, userinfo, isSelf }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Message;
+export default Message

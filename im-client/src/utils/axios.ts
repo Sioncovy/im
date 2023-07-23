@@ -1,24 +1,24 @@
-import axios, { AxiosRequestConfig, AxiosInstance, AxiosResponse } from "axios";
-import { readLocalItem } from "./storage";
-import { message } from "../components/message/message";
+import axios, { AxiosRequestConfig, AxiosInstance, AxiosResponse } from "axios"
+import { readLocalItem } from "./storage"
+import { message } from "../components/message/message"
 
 type Result<T> = {
-  code: number;
-  msg: string;
-  data?: T;
-};
+  code: number
+  msg: string
+  data?: T
+}
 
 export class Request {
   // axios 实例
-  instance: AxiosInstance;
+  instance: AxiosInstance
   baseConfig: AxiosRequestConfig = {
     baseURL: "http://localhost:4000",
     timeout: 3000,
-  };
+  }
 
   constructor(config: AxiosRequestConfig) {
     // 创建 axios 实例
-    this.instance = axios.create(Object.assign(this.baseConfig, config));
+    this.instance = axios.create(Object.assign(this.baseConfig, config))
 
     // 设置拦截器
     // 全局请求拦截器
@@ -28,37 +28,39 @@ export class Request {
           "/user/login",
           "/user/register",
           "/user/authCode",
-        ];
-        const token = readLocalItem("token");
-        const url = res.url?.split("?")[0];
-        if (res.headers) res.headers.Authorization = `Bearer ${token}`;
+          "/email/sendCode",
+        ]
+        const token = readLocalItem("token")
+        const url = res.url?.split("?")[0]
+        console.log("url", url)
+        if (res.headers) res.headers.Authorization = `Bearer ${token}`
         if (token || noAuthApiList.includes(url as string)) {
-          return res;
+          return res
         }
-        message.error("登录失效，请重新登录");
-        window.location.assign("/login");
+        message.error("登录失效，请重新登录")
+        window.location.assign("/login")
       },
       (err: any) => err
-    );
+    )
 
     // 全局响应拦截器
     this.instance.interceptors.response.use(
       (res: AxiosResponse) => {
-        return res.data;
+        return res.data
       },
       (err: any) => err
-    );
+    )
   }
 
   public request(config: AxiosRequestConfig): Promise<AxiosResponse> {
-    return this.instance.request(config);
+    return this.instance.request(config)
   }
 
   public get<T = any>(
     url: string,
     config?: AxiosRequestConfig
   ): Promise<Result<T>> {
-    return this.instance.get(url, config);
+    return this.instance.get(url, config)
   }
 
   public post<T = any>(
@@ -66,7 +68,7 @@ export class Request {
     data?: any,
     config?: AxiosRequestConfig
   ): Promise<Result<T>> {
-    return this.instance.post(url, data, config);
+    return this.instance.post(url, data, config)
   }
 
   public put<T = any>(
@@ -74,7 +76,7 @@ export class Request {
     data?: any,
     config?: AxiosRequestConfig
   ): Promise<Result<T>> {
-    return this.instance.put(url, data, config);
+    return this.instance.put(url, data, config)
   }
 
   public delete<T = any>(
@@ -82,8 +84,8 @@ export class Request {
     data?: any,
     config?: AxiosRequestConfig
   ): Promise<Result<T>> {
-    return this.instance.delete(url, config);
+    return this.instance.delete(url, config)
   }
 }
 
-export default new Request({});
+export default new Request({})

@@ -49,8 +49,7 @@ export class ChatGateway {
     const msg = await this.chatService.createMsg(payload);
     if (msg?.code === 200) {
       client.to(payload.chatId).emit('notifyMessage', msg);
-    } else {
-      client.emit('notifyMessage', msg);
     }
+    client.emit('notifyMessage', msg);
   }
 }

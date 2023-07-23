@@ -1,21 +1,21 @@
-import React, { useState, useEffect, ReactDOM } from "react";
-import Button from "../../components/button/button";
-import Input from "../../components/input/input";
-import Request from "../../utils/axios";
-import { readLocalItem, saveLocalItem } from "../../utils/storage";
-import { message } from "../../components/message/message";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, ReactDOM } from "react"
+import Button from "../../components/button/button"
+import Input from "../../components/input/input"
+import Request from "../../utils/axios"
+import { readLocalItem, saveLocalItem } from "../../utils/storage"
+import { message } from "../../components/message/message"
+import { useNavigate } from "react-router-dom"
 
 export default function login() {
-  const [isLogin, setIsLogin] = useState(true);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [codeImg, setCodeImg] = useState<any>();
-  const [code, setCode] = useState<any>();
-  const [timestamp, setTimestamp] = useState(new Date().getTime());
-  console.log(new Date().getTime());
+  const [isLogin, setIsLogin] = useState(true)
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const [codeImg, setCodeImg] = useState<any>()
+  const [code, setCode] = useState<any>()
+  const [timestamp, setTimestamp] = useState(new Date().getTime())
+  console.log(new Date().getTime())
 
-  const router = useNavigate();
+  const router = useNavigate()
 
   const loginHandle = async () => {
     const res: any = await Request.post("/user/login", {
@@ -23,88 +23,88 @@ export default function login() {
       password,
       code,
       timestamp,
-    });
+    })
     if (res.code !== 200) {
-      message.error(res.msg);
-      getAuthCode();
-      return;
+      message.error(res.msg)
+      await getAuthCode()
+      return
     }
-    saveLocalItem("token", res.data.token);
-    message.success(res.msg);
-    router("/");
-  };
+    saveLocalItem("token", res.data.token)
+    message.success(res.msg)
+    router("/")
+  }
 
   const registerHandle = async () => {
     const res: any = await Request.post("/user/register", {
       username,
       password,
       code,
-    });
-    if (res.code !== 200) {
-      message.error(res.msg);
-      getAuthCode();
-      return;
+    })
+    if (res.code === 200) {
+      message.success(res.msg)
+      setIsLogin(true)
+      return
     }
-    message.success(res.msg);
-    setIsLogin(true);
-  };
+    message.error(res.msg ?? "系统错误")
+    await getAuthCode()
+  }
 
   const getAuthCode = async () => {
-    const res = await Request.get(`/user/authCode?timestamp=${timestamp}`);
-    setCodeImg(res);
-  };
+    const res = await Request.get(`/user/authCode?timestamp=${timestamp}`)
+    setCodeImg(res)
+  }
 
   const sendEmailCode = async () => {
-    const res: any = await Request.post("/email/sendCode", {
-      email: username,
-    });
-    if (res.code !== 200) {
-      message.error(res.msg);
-      return;
+    console.log("sendEmailCode")
+    const res = await Request.post("/email/sendCode", { email: username })
+
+    if (res.code === 200) {
+      message.success(res.msg)
+      return
     }
-    message.success(res.msg);
-  };
+    message.error(res.msg ?? "系统错误")
+  }
 
   const validate = (
     str: string,
     type: "length" | "email",
     config?:
       | {
-          len: number;
-          method: "lt" | "le" | "eq" | "ne" | "gt" | "ge"; // < <= === !== > >=
+          len: number
+          method: "lt" | "le" | "eq" | "ne" | "gt" | "ge" // < <= === !== > >=
         }
       | any
   ) => {
     if (type === "length") {
-      const { len } = config;
-      const slen = str.length;
+      const { len } = config
+      const slen = str.length
       switch (config?.method) {
         case "lt":
-          return slen < len;
+          return slen < len
         case "le":
-          return slen <= len;
+          return slen <= len
         case "eq":
-          return slen === len;
+          return slen === len
         case "ne":
-          return slen !== len;
+          return slen !== len
         case "gt":
-          return slen > len;
+          return slen > len
         case "ge":
-          return slen >= len;
+          return slen >= len
         default:
-          return slen < len;
+          return slen < len
       }
     }
     if (type === "email") {
       return str.match(
         /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      );
+      )
     }
-  };
+  }
 
   useEffect(() => {
-    getAuthCode();
-  }, []);
+    getAuthCode()
+  }, [])
 
   return (
     <div className="flex justify-between items-center  h-[34rem] w-[60rem] px-12 py-10 bg-white rounded">
@@ -185,7 +185,10 @@ export default function login() {
             <div className="text-xs text-gray-400 flex justify-center items-center space-x-3 mt-3">
               已有账号？
               <span
-                onClick={() => setIsLogin(true)}
+                onClick={e => {
+                  e.stopPropagation()
+                  setIsLogin(true)
+                }}
                 className="text-indigo-400 cursor-pointer transition-all select-none hover:text-indigo-600 active:scale-95"
               >
                 前去登录
@@ -195,5 +198,5 @@ export default function login() {
         )}
       </div>
     </div>
-  );
+  )
 }
