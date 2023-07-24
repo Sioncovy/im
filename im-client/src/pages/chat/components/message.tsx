@@ -9,7 +9,7 @@ export interface MessageProps {
     from: string
     chat_type?: number
     msg: string
-    message_type?: number
+    type?: number
     send_time: number
   }
   userinfo: UserInfoType
@@ -41,15 +41,19 @@ const Message: React.FC<MessageProps> = ({ msgInfo, userinfo, isSelf }) => {
           )}
         </div>
         <div className={"flex mt-1 " + (isSelf ? "flex-row-reverse" : "")}>
-          <div
-            className={
-              "break-all py-2 px-3 rounded  bg-slate-200 " +
-              (isSelf ? "ml-2" : "mr-2")
-            }
-          >
-            {/* <div className="">{msginfo.msg}</div> */}
-            {msgInfo?.msg}
-          </div>
+          {msgInfo.type === 0 ? (
+            <div
+              className={
+                "break-all py-2 px-3 rounded  bg-slate-200 " +
+                (isSelf ? "ml-2" : "mr-2")
+              }
+            >
+              {/* <div className="">{msginfo.msg}</div> */}
+              {msgInfo?.msg}
+            </div>
+          ) : (
+            <img className="w-40" src={msgInfo.msg} alt="" />
+          )}
           <div className="flex flex-col text-xs justify-end text-gray-500">
             {timeDisplay ? (
               <div className={"" + (isSelf ? "text-end" : "")}>

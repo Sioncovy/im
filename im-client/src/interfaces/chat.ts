@@ -10,6 +10,7 @@ export interface MessageType {
 }
 
 export interface ChatType {
+  last_msg_type: number
   chatId?: string
   from?: string
   to?: string

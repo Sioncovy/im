@@ -1,35 +1,26 @@
-/*
- * @Author: Sioncovy 1298184727@qq.com
- * @Date: 2022-10-26 02:07:07
- * @LastEditors: Sioncovy 1298184727@qq.com
- * @LastEditTime: 2022-10-26 12:23:28
- * @FilePath: \im\im-client\src\pages\contact\contactSide.tsx
- * @Description:
- *
- * Copyright (c) 2022 by Sioncovy 1298184727@qq.com, All Rights Reserved.
- */
-import React, { useEffect, useState } from "react";
-import RequestItem from "./components/request";
-import PersonItem from "./components/person";
-import Request from "../../utils/axios";
-import { readLocalItem, saveLocalItem } from "../../utils/storage";
-import { Routes, Route, Link } from "react-router-dom";
+import React, { useEffect, useState } from "react"
+import RequestItem from "./components/request"
+import PersonItem from "./components/person"
+import Request from "../../utils/axios"
+import { readLocalItem, saveLocalItem } from "../../utils/storage"
+import { Routes, Route, Link, useLocation } from "react-router-dom"
 
 interface RequestType {
-  friend_username: string;
-  id: string;
-  reason: string;
-  type: 0;
+  friend_username: string
+  id: string
+  reason: string
+  type: 0
 }
 
 interface ContactType {
-  username: string;
-  avatar: string;
-  nickname: string;
+  username: string
+  avatar: string
+  nickname: string
 }
 
 export default function ContactSide() {
-  const [currentIndex, setCurrentIndex] = useState<number>(1);
+  const location = useLocation()
+  const [currentIndex, setCurrentIndex] = useState<number>(1)
 
   const sideList = [
     {
@@ -42,7 +33,19 @@ export default function ContactSide() {
       to: "/contact",
       icon: "/src/assets/contact/contacts.svg",
     },
-  ];
+  ]
+
+  useEffect(() => {
+    switch (location.pathname) {
+      case sideList[0].to:
+        setCurrentIndex(0)
+        break
+      case sideList[1].to:
+        setCurrentIndex(1)
+        break
+    }
+  })
+
   return (
     <div className="p-2 space-y-1">
       {/* 侧边选项 */}
@@ -66,5 +69,5 @@ export default function ContactSide() {
         </Link>
       ))}
     </div>
-  );
+  )
 }

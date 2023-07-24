@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Route, Routes, Link, useNavigate } from "react-router-dom"
+import { Route, Routes, Link, useNavigate, useLocation } from "react-router-dom"
 import Request from "../../utils/axios"
 // import ChatMain from "./chatMain";
 import { UserInfoType } from "../../interfaces/user"
@@ -9,6 +9,7 @@ import { ChatType } from "../../interfaces/chat"
 import { useChatStore, useBaseStore } from "../../store"
 
 export default function ChatSide() {
+  const { pathname } = useLocation()
   const [chatList, setChatList] = useState<ChatType[]>([])
   const [currentFriendInfo, setCurrentFriendInfo] = useState<UserInfoType>({
     nickname: "",
@@ -24,6 +25,8 @@ export default function ChatSide() {
   const router = useNavigate()
 
   useEffect(() => {
+    console.log(pathname.split("/")[1])
+    setCurrentChatId(pathname.split("/")[1])
     Request.get("/chat").then(res => {
       console.log("chatList", res.data.chatList)
 
@@ -75,15 +78,13 @@ export default function ChatSide() {
             onClick={() => startChat(friendInfo, item.chatId!)}
             className={
               "flex items-center space-x-2 px-2 py-2 rounded-md cursor-pointer hover:bg-slate-200 " +
-              (currentFriendInfo.username === friendInfo.username
-                ? "bg-slate-200"
-                : "")
+              (currentChatId === item.chatId ? "bg-slate-200" : "")
             }
           >
-            <div className="w-10 h-10 rounded-full overflow-hidden">
+            <div className="w-10 min-w-[2.5rem] h-10 rounded-full overflow-hidden">
               <img src={friendInfo?.avatar} alt="" />
             </div>
-            <div className="flex-1 space-y-1">
+            <div className="flex-1 space-y-1 overflow-hidden">
               <div className="flex justify-between items-center text-sm ">
                 <div className="font-semibold tracking-wide">
                   {friendInfo?.nickname}
@@ -100,7 +101,9 @@ export default function ChatSide() {
                 </div>
               </div>
               <div className="flex justify-between text-xs max-w-full h-4 overflow-hidden text-gray-500">
-                <div>{item?.last_msg ?? ""}</div>
+                <div>
+                  {item.last_msg_type === 0 ? item?.last_msg ?? "" : "[图片]"}
+                </div>
                 {chatUnreadMsgMap.get(item.chatId!) ? (
                   <div className="flex justify-center text-white rounded-full bg-red-400 border-box px-1 min-w-[1rem]">
                     {chatUnreadMsgMap.get(item.chatId!)}

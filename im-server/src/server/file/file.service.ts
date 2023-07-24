@@ -3,6 +3,7 @@ import { CreateFileDto } from './dto/create-file.dto';
 import { UpdateFileDto } from './dto/update-file.dto';
 import { config } from 'src/config';
 import { Express } from 'express';
+import qiniu from 'qiniu';
 
 @Injectable()
 export class FileService {
@@ -26,11 +27,11 @@ export class FileService {
     return `This action removes a #${id} file`;
   }
 
-  uploadAvatar(file: Express.Multer.File) {
+  uploadFile(file: Express.Multer.File) {
     return {
       code: 200,
       data: {
-        avatar: `${config.host}/${file.filename}`,
+        url: `${config.host}/${file.filename}`,
       },
       message: 'ok',
     };

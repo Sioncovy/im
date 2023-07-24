@@ -31,7 +31,7 @@ export default function ChatMain() {
 
   const scrollToBottom = () => {
     if (msgListRef && msgListRef.current) {
-      msgListRef.current.scrollIntoView()
+      msgListRef.current.scrollIntoView({ behavior: "smooth" })
     }
   }
 

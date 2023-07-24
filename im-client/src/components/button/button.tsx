@@ -1,30 +1,36 @@
 import React, { useEffect } from "react"
 
 interface propsType {
-  type?: "" | "primary" | "success"
+  type?: "" | "primary" | "success" | "icon"
   onClick?: Function
-  children?: string
+  children?: string | React.ReactNode
   size?: "small" | "medium" | "large"
   style?: string
+  icon?: string
 }
 
 export default function Button(props: propsType) {
   // console.log(props);
-  let { children: name } = props
+  let { children, icon } = props
 
   const customStyle = () => {
     const { type, size, style } = props
     // 默认样式
     let styleList = [
-      "box-border h-9 py-1 rounded transition-all active:scale-95 border-2 ripple",
+      "box-border h-9 py-1 rounded transition-all active:scale-95 ripple",
     ] as string[]
-
+    if (type !== "icon") {
+      styleList.push("border-2")
+    }
     // 按钮大小
-    let sizeClass = "px-6"
-    if (size === "small") {
-      sizeClass = "px-4 h-8 text-sm"
-    } else if (size === "large") {
-      sizeClass = "px-8"
+    let sizeClass = ""
+    if (type !== "icon") {
+      sizeClass = "px-6"
+      if (size === "small") {
+        sizeClass = "px-4 h-8 text-sm"
+      } else if (size === "large") {
+        sizeClass = "px-8"
+      }
     }
     styleList.push(sizeClass)
 
@@ -57,7 +63,7 @@ export default function Button(props: propsType) {
   // {classes}
   return (
     <button className={styleList} onClick={handleClick}>
-      {name}
+      {icon ? <img className="h-full" src={icon} alt="" /> : children}
     </button>
   )
 }

@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import Input from '../../components/input/input'
-import Button from '../../components/button/button'
-import Request from '../../utils/axios'
-import { message } from '../../components/message/message'
-import { readLocalItem } from '../../utils/storage'
+import React, { useEffect, useState } from "react"
+import Input from "../../components/input/input"
+import Button from "../../components/button/button"
+import Request from "../../utils/axios"
+import { message } from "../../components/message/message"
+import { readLocalItem } from "../../utils/storage"
 
 type profileType = {
   avatar?: string
@@ -13,43 +13,43 @@ type profileType = {
 
 export default function Profile() {
   const [profile, setProfile] = useState<profileType>({
-    avatar: '',
-    nickname: '',
-    bio: ''
+    avatar: "",
+    nickname: "",
+    bio: "",
   })
   useEffect(() => {
-    const userinfo = readLocalItem('userinfo')
+    const userinfo = readLocalItem("userinfo")
     setProfile({
       avatar: userinfo.avatar,
       nickname: userinfo.nickname,
-      bio: userinfo.bio
+      bio: userinfo.bio,
     })
   }, [])
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     const res = await Request.post(
-      '/file/upload',
+      "/file/upload",
       { file },
       {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          "Content-Type": "multipart/form-data",
+        },
       }
     )
     if (res.code === 200) {
-      setProfile({ ...profile, avatar: res.data.avatar })
-      message.success('上传成功')
+      setProfile({ ...profile, avatar: res.data.url })
+      message.success("上传成功")
     } else {
-      message.error('上传失败')
+      message.error("上传失败")
     }
   }
 
   const handleUpdateProfile = async () => {
-    const res = await Request.post('/user/update', profile)
+    const res = await Request.post("/user/update", profile)
     if (res.code === 200) {
-      message.success('修改成功')
+      message.success("修改成功")
     } else {
-      message.error('修改失败')
+      message.error("修改失败")
     }
   }
   return (
