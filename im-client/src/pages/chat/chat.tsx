@@ -7,6 +7,8 @@ import InputBox from "./components/inputbox"
 import { socket } from "../../utils/socket"
 import { useBaseStore, useChatStore } from "../../store"
 import Button from "../../components/button/button"
+import { useScroll } from "../../hooks/useScroll"
+import { debounce } from "lodash"
 
 interface MsgResponse {
   chatId: string
@@ -29,19 +31,64 @@ export default function ChatMain() {
   const [msgList, setMsgList] = useState<MsgResponse[]>([])
   const msgListRef = useRef<HTMLDivElement>(null)
 
+  const chatBoxRef = useRef<HTMLDivElement>(null)
+
+  const [pageNum, setPageNum] = useState(0)
+  const pageNumRef = useRef(pageNum)
+  const [pageSize, setPageSize] = useState(20)
+
+  const [chatHeight, setChatHeight] = useState(0)
+
   const scrollToBottom = () => {
     if (msgListRef && msgListRef.current) {
-      msgListRef.current.scrollIntoView({ behavior: "smooth" })
+      msgListRef.current.scrollIntoView()
     }
   }
 
-  useEffect(() => {
-    console.log("chatId", chatId)
+  const scrollToBefore = () => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTo(
+        0,
+        chatBoxRef.current.scrollHeight - chatHeight
+      )
+    }
+  }
 
-    Request.get(`/chat/msg/${chatId}`).then(res => {
-      setMsgList(res.data.msgList)
+  const isCloseToTop = () => {
+    const chatBox = chatBoxRef.current
+    return chatBox!.scrollTop === 0
+  }
+
+  const getMsgList = async () => {
+    const res = await Request.get(
+      `/chat/msg/${chatId}?pageNum=${pageNumRef.current}&pageSize=${pageSize}`
+    )
+    setMsgList(prev => [...res.data.msgList, ...prev])
+    setPageNum(prev => prev + 1)
+  }
+
+  useEffect(() => {
+    pageNumRef.current = pageNum
+    // console.log("pageNum after getMsgList:", pageNumRef.current)
+  }, [pageNum])
+
+  useScroll(
+    chatBoxRef,
+    debounce(() => {
+      if (isCloseToTop()) {
+        // console.log("pageNum", pageNumRef.current, "pageSize", pageSize)
+        getMsgList()
+      }
+    }, 100)
+  )
+
+  useEffect(() => {
+    setPageNum(0)
+    setMsgList([])
+    getMsgList().then(() => {
       scrollToBottom()
     })
+
     socket.on("notifyMessage", (res: any) => {
       console.log(res)
       if (chatId === res.data.chatId) {
@@ -56,9 +103,13 @@ export default function ChatMain() {
   }, [chatId])
 
   useEffect(() => {
-    console.log(chatStore.count)
-    scrollToBottom()
-  }, [msgList, chatStore.count])
+    if (pageNum === 1) {
+      scrollToBottom()
+    } else {
+      scrollToBefore()
+    }
+    setChatHeight(chatBoxRef.current!.scrollHeight)
+  }, [msgList])
 
   return (
     <div className="flex flex-col relative w-full h-full bg-slate-50">
@@ -68,7 +119,10 @@ export default function ChatMain() {
         </div>
         <div className="text-lg font-semibold">{friendInfo?.nickname}</div>
       </div>
-      <div className="flex-1 flex flex-col px-4 py-2 space-y-4 w-full overflow-auto">
+      <div
+        ref={chatBoxRef}
+        className="flex-1 flex flex-col px-4 py-2 space-y-4 w-full overflow-auto"
+      >
         {msgList?.map((item: MsgResponse) => (
           <Message
             key={item.msg_id}

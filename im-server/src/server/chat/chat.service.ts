@@ -144,7 +144,12 @@ export class ChatService {
     }
   }
 
-  async getMsgs(chatId: string, username: string) {
+  async getMsgs(
+    chatId: string,
+    username: string,
+    pageNum: number,
+    pageSize: number,
+  ) {
     try {
       const chat = await this.chatModel.findOne({ chatId });
       if (chat.from !== username && chat.to !== username) {
@@ -153,10 +158,12 @@ export class ChatService {
           msg: '非本人查询！',
         };
       }
-      const msgList = await this.messageModel.find(
-        { chatId },
-        { __v: 0, _id: 0 },
-      );
+      const msgList = await this.messageModel
+        .find({ chatId }, { __v: 0, _id: 0 })
+        .sort({ send_time: -1 })
+        .skip(pageNum * pageSize)
+        .limit(pageSize);
+      msgList.sort((a, b) => a.send_time - b.send_time);
       return {
         code: 200,
         data: {

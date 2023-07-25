@@ -51,7 +51,11 @@ export class ChatController {
   @Get('msg/:chatId')
   async getMsg(@Param('chatId') chatId: string, @Req() req) {
     const { username } = req.user as { username: string };
+    const { pageNum, pageSize } = req.query as {
+      pageNum: number;
+      pageSize: number;
+    };
 
-    return await this.chatService.getMsgs(chatId, username);
+    return await this.chatService.getMsgs(chatId, username, pageNum, pageSize);
   }
 }

@@ -24,7 +24,7 @@ export class FileController {
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   async uploadAvatar(@UploadedFile() file: Express.Multer.File) {
-    return this.fileService.uploadAvatar(file);
+    return this.fileService.uploadFile(file);
   }
   @Post()
   create(@Body() createFileDto: CreateFileDto) {
