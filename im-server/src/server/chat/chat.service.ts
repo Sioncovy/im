@@ -78,6 +78,11 @@ export class ChatService {
             },
           },
         },
+        {
+          $sort: {
+            last_time: -1,
+          },
+        },
       ]);
       return {
         code: 200,

@@ -33,11 +33,12 @@ export default function ChatMain() {
 
   const chatBoxRef = useRef<HTMLDivElement>(null)
 
-  const [pageNum, setPageNum] = useState(0)
-  const pageNumRef = useRef(pageNum)
+  const [pageNum, setPageNum] = useState<number | undefined>(undefined)
+  // const pageNumRef = useRef(pageNum)
   const [pageSize, setPageSize] = useState(20)
 
   const [chatHeight, setChatHeight] = useState(0)
+  const [displayLoadMore, setDisplayLoadMore] = useState(true)
 
   const scrollToBottom = () => {
     if (msgListRef && msgListRef.current) {
@@ -54,40 +55,35 @@ export default function ChatMain() {
     }
   }
 
-  const isCloseToTop = () => {
-    const chatBox = chatBoxRef.current
-    return chatBox!.scrollTop === 0
-  }
-
   const getMsgList = async () => {
     const res = await Request.get(
-      `/chat/msg/${chatId}?pageNum=${pageNumRef.current}&pageSize=${pageSize}`
+      `/chat/msg/${chatId}?pageNum=${pageNum}&pageSize=${pageSize}`
     )
+    if (res.data.msgList.length === 0) {
+      setDisplayLoadMore(false)
+    } else {
+      setDisplayLoadMore(true)
+    }
     setMsgList(prev => [...res.data.msgList, ...prev])
-    setPageNum(prev => prev + 1)
   }
 
   useEffect(() => {
-    pageNumRef.current = pageNum
-    // console.log("pageNum after getMsgList:", pageNumRef.current)
+    if (pageNum === undefined) return
+    getMsgList()
   }, [pageNum])
 
-  useScroll(
-    chatBoxRef,
-    debounce(() => {
-      if (isCloseToTop()) {
-        // console.log("pageNum", pageNumRef.current, "pageSize", pageSize)
+  useEffect(() => {
+    console.log("chatId", chatId)
+    const cleanup = () => {
+      setMsgList([])
+      if (pageNum !== 0) {
+        setPageNum(0)
+      } else {
+        console.log("pageNum", pageNum)
         getMsgList()
       }
-    }, 100)
-  )
-
-  useEffect(() => {
-    setPageNum(0)
-    setMsgList([])
-    getMsgList().then(() => {
-      scrollToBottom()
-    })
+    }
+    cleanup()
 
     socket.on("notifyMessage", (res: any) => {
       console.log(res)
@@ -103,7 +99,7 @@ export default function ChatMain() {
   }, [chatId])
 
   useEffect(() => {
-    if (pageNum === 1) {
+    if (pageNum === 0) {
       scrollToBottom()
     } else {
       scrollToBefore()
@@ -123,6 +119,12 @@ export default function ChatMain() {
         ref={chatBoxRef}
         className="flex-1 flex flex-col px-4 py-2 space-y-4 w-full overflow-auto"
       >
+        <Button
+          style={displayLoadMore ? "" : "hidden"}
+          onClick={() => setPageNum(prev => prev! + 1)}
+        >
+          加载更多
+        </Button>
         {msgList?.map((item: MsgResponse) => (
           <Message
             key={item.msg_id}

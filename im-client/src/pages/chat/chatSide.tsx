@@ -59,6 +59,9 @@ export default function ChatSide() {
         }
       })
     })
+    return () => {
+      socket.off("notifyMessage")
+    }
   }, [])
 
   const startChat = (friendInfo: UserInfoType, chatId: string) => {
